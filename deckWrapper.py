@@ -13,3 +13,4 @@ class DeckWrapper:
 		self.deckCode = deckString
 		self.deck = deckstrings.Deck().from_deckstring(self.deckCode)
 		self.cardList = self.deck.get_dbf_id_list()
+		self.classification = "NOCLASSIFY"
