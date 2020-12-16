@@ -1,6 +1,6 @@
 import numpy as np
-
-print("RUNNING TESTS")
+import csvManip as csvManip
+print("RUNNING TESTS\n------------------")
 
 #-------------------------------------------------
 # DECK WRAPPER
@@ -34,3 +34,34 @@ print("\tdeckWrapper Class passes all tests")
 #-------------------------------------------------
 
 
+#-------------------------------------------------
+#START CSV MANIP
+
+
+deckDict = {}
+classLists = []
+filename="tespaF2020OpenS2Finals.csv"
+deckDict, classLists = csvManip.parse_csv(filename, deckDict, classLists)
+
+assert deckDict != {}, "Error reading into Deck Dictionary"
+assert deckDict["DQA into DQA"] != None, "Error when reading into deck dictionary"
+assert len(classLists[0]) == 8, "error when parsing individual classes (demon Hunter)"
+assert len(classLists[9]) == 5, "Error when parsing individual classes (warrior)"
+
+
+
+
+print("\tcsvManip Functions passing all tests")
+
+#END CSV MANIP
+#-------------------------------------------------
+
+
+
+
+
+
+
+
+
+print("------------------\nALL TESTS PASSING")
