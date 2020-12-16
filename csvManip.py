@@ -7,6 +7,12 @@ import os
 
 
 
+def find_code(text):
+    line = text.strip()
+    for x in line.split(' '):
+        if x.startswith('AAE'):
+            return x
+    return line
 
 
 
@@ -94,40 +100,43 @@ def parse_csv(filename, deckDict, classLists):
 		for index, a in enumerate(schema):
 			if a!='D' or index >= len(row):
 				continue
-			deckstring= deserialize(row[index])
+			decklist = find_code(row[index])
+			deckstring= deserialize(decklist)
 			for i in range(3):
 				try:
 					deck = DeckWrapper(name,uniqueIDCounter, (deckstring+'='*i))
-					uniqueIDCounter+=1
-					if deck!=None:
-						deck_dict[name].append(deck)
-
-						# add to class lists
-						if deck.ingameClass == 'demonhunter':
-							dhA.append(deck)
-						elif deck.ingameClass == 'druid':
-							dA.append(deck)
-						elif deck.ingameClass == 'hunter':
-							hA.append(deck)
-						elif deck.ingameClass == 'mage':
-							mA.append(deck)
-						elif deck.ingameClass == 'paladin':
-							paA.append(deck)
-						elif deck.ingameClass == 'priest':
-							prA.append(deck)
-						elif deck.ingameClass == 'rogue':
-							rA.append(deck)
-						elif deck.ingameClass == 'shaman':
-							sA.append(deck)
-						elif deck.ingameClass == 'warlock':
-							wlA.append(deck)
-						elif deck.ingameClass == 'warrior':
-							wrA.append(deck)
-						else:
-							print("Critical Error with deck parsing")
-							exit(0)
 				except Exception as e:
 					continue
+					#print(deck.cardList)
+				uniqueIDCounter+=1
+				if deck!=None:
+					deckDict[name].append(deck)
+
+					# add to class lists
+					if deck.ingameClass == 'demonhunter':
+						dhA.append(deck)
+					elif deck.ingameClass == 'druid':
+						dA.append(deck)
+					elif deck.ingameClass == 'hunter':
+						hA.append(deck)
+					elif deck.ingameClass == 'mage':
+						mA.append(deck)
+					elif deck.ingameClass == 'paladin':
+						paA.append(deck)
+					elif deck.ingameClass == 'priest':
+						prA.append(deck)
+					elif deck.ingameClass == 'rogue':
+						rA.append(deck)
+					elif deck.ingameClass == 'shaman':
+						sA.append(deck)
+					elif deck.ingameClass == 'warlock':
+						wlA.append(deck)
+					elif deck.ingameClass == 'warrior':
+						wrA.append(deck)
+					else:
+						print("Critical Error with deck parsing")
+						exit(0)
+
 
 		classLists = np.array([dhA, dA, hA, mA, paA, prA, rA, sA, wlA, wrA], dtype=np.object)
 

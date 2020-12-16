@@ -45,6 +45,7 @@ csvManip.parse_csv(filename, deckDict, classLists)
 
 assert deckDict != {}, "Error reading into Deck Dictionary"
 assert deckDict["DQA into DQA"] != None, "Error when reading into deck dictionary"
+assert classLists != [], "error making class lists"
 
 
 
