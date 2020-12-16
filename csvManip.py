@@ -103,10 +103,13 @@ def parse_csv(filename, deckDict, classLists):
 				continue
 			decklist = find_code(row[index])
 			deckstring= deserialize(decklist)
+			nAdded = 1
 			for i in range(3):
 				try:
-					deck = DeckWrapper(name,uniqueIDCounter, (deckstring+'='*i))
-					break
+					if nAdded == 1:
+						deck = DeckWrapper(name,uniqueIDCounter, (deckstring+'='*i))
+						added = 0
+						break
 				except Exception as e:
 					continue
 			deckDict[name].append(deck)
@@ -114,31 +117,41 @@ def parse_csv(filename, deckDict, classLists):
 			if deck!=None:
 				deckDict[name].append(deck)
 				# add to class lists
+				# ran into weird bug where some decks were double adding so check if its not already in
 				if deck.ingameClass == 'demonhunter':
-					dhA.append(deck)
+					if deck not in dhA:
+						dhA.append(deck)
 				elif deck.ingameClass == 'druid':
-					dA.append(deck)
+					if deck not in dA:
+						dA.append(deck)
 				elif deck.ingameClass == 'hunter':
+					if deck not in hA:
 						hA.append(deck)
 				elif deck.ingameClass == 'mage':
-					mA.append(deck)
+					if deck not in mA:
+						mA.append(deck)
 				elif deck.ingameClass == 'paladin':
-					paA.append(deck)
+					if deck not in paA:
+						paA.append(deck)
 				elif deck.ingameClass == 'priest':
-					prA.append(deck)
+					if deck not in prA:
+						prA.append(deck)
 				elif deck.ingameClass == 'rogue':
-					rA.append(deck)
+					if deck not in rA:
+						rA.append(deck)
 				elif deck.ingameClass == 'shaman':
-					sA.append(deck)
+					if deck not in sA:
+						sA.append(deck)
 				elif deck.ingameClass == 'warlock':
-					wlA.append(deck)
+					if deck not in wlA:
+						wlA.append(deck)
 				elif deck.ingameClass == 'warrior':
-					wrA.append(deck)
+					if deck not in wrA:
+						wrA.append(deck)
 				else:
 					print("Critical Error with deck parsing")
 					exit(0)
 
 
-		classLists = np.array([dhA, dA, hA, mA, paA, prA, rA, sA, wlA, wrA])
+	classLists = np.array([dhA, dA, hA, mA, paA, prA, rA, sA, wlA, wrA])
 	return deckDict, classLists
-
