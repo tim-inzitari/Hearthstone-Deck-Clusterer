@@ -12,29 +12,29 @@ import os
 
 
 def deserialize(input):
-    deck = None
-    lines = input.split('\n')
-    deckString = None;
+	deck = None
+	lines = input.split('\n')
+	deckString = None;
 
-    for line in lines:
-        if line is None:
-            continue
-        if line.startswith("#"):
-            #Pastebin copies remove newlines so we gotta do this
-            if line.find("#AAE") != -1:
-                # Account for deck named AAE
-                if line.find("#AAE") == line.find("###AAE"): 
-                    line = line[line.find("###AAE"+6):]
-                start = line.find("AAE")
-                line = line[start:]
-                end = line.find("#")
-                line = line[:end]
-                return line
-            continue
-        if deckString is None:
-            deckString = line
-            return deckString
-    return None
+	for line in lines:
+		if line is None:
+			continue
+		if line.startswith("#"):
+			#Pastebin copies remove newlines so we gotta do this
+			if line.find("#AAE") != -1:
+				# Account for deck named AAE
+				if line.find("#AAE") == line.find("###AAE"): 
+					line = line[line.find("###AAE"+6):]
+				start = line.find("AAE")
+				line = line[start:]
+				end = line.find("#")
+				line = line[:end]
+				return line
+			continue
+		if deckString is None:
+			deckString = line
+			return deckString
+	return None
 
 
 # Class Code for List Vector:
@@ -62,8 +62,9 @@ def parse_csv(filename, deckDict, classLists):
 	key = 0
 	start = 1
 	uniqueIDCounter = 0
+	deckstring = ""
 
-	dhA,dA,hA,mA,paA,prA,rA,sA,wlA,wrA = []
+	dhA,dA,hA,mA,paA,prA,rA,sA,wlA,wrA = [],[],[],[],[],[],[],[],[],[]
 
 
 	for index, x in enumerate(schemaLine):
@@ -94,36 +95,39 @@ def parse_csv(filename, deckDict, classLists):
 			if a!='D' or index >= len(row):
 				continue
 			deckstring= deserialize(row[index])
-			deckstring+="===" #bug fix
-			deck = deckWrapper(name,uniqueIDCounter, deckString)
-			uniqueIDCounter+=1
-			if deck!=None:
-                deck_dict[name].append(deck)
+			for i in range(3):
+				try:
+					deck = DeckWrapper(name,uniqueIDCounter, (deckstring+'='*i))
+					uniqueIDCounter+=1
+					if deck!=None:
+						deck_dict[name].append(deck)
 
-                # add to class lists
-                if deck.ingameClass == 'demonhunter':
-                	dhA.append(deck)
-                elif deck.ingameClass == 'druid':
-                	dA.append(deck)
-                elif deck.ingameClass == 'hunter':
-                	hA.append(deck)
-                elif deck.ingameClass == 'mage':
-                	mA.append(deck)
-                elif deck.ingameClass == 'paladin':
-                	paA.append(deck)
-                elif deck.ingameClass == 'priest':
-                	prA.append(deck)
-                elif deck.ingameClass == 'rogue':
-                	rA.append(deck)
-                elif deck.ingameClass == 'shaman':
-                	sA.append(deck)
-                elif deck.ingameClass == 'warlock':
-                	wlA.append(deck)
-                elif deck.ingameClass == 'warrior':
-                	wrA.append(deck)
-                else:
-                	print("Critical Error with deck parsing")
-                	exit(0)
+						# add to class lists
+						if deck.ingameClass == 'demonhunter':
+							dhA.append(deck)
+						elif deck.ingameClass == 'druid':
+							dA.append(deck)
+						elif deck.ingameClass == 'hunter':
+							hA.append(deck)
+						elif deck.ingameClass == 'mage':
+							mA.append(deck)
+						elif deck.ingameClass == 'paladin':
+							paA.append(deck)
+						elif deck.ingameClass == 'priest':
+							prA.append(deck)
+						elif deck.ingameClass == 'rogue':
+							rA.append(deck)
+						elif deck.ingameClass == 'shaman':
+							sA.append(deck)
+						elif deck.ingameClass == 'warlock':
+							wlA.append(deck)
+						elif deck.ingameClass == 'warrior':
+							wrA.append(deck)
+						else:
+							print("Critical Error with deck parsing")
+							exit(0)
+				except Exception as e:
+					continue
 
-        classLists = np.array([dhA, dA, hA, ma, paA, prA, rA, sA, wlA, wrA], dtype=np.object)
+		classLists = np.array([dhA, dA, hA, mA, paA, prA, rA, sA, wlA, wrA], dtype=np.object)
 

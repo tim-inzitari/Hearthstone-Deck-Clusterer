@@ -1,5 +1,5 @@
 import numpy as np
-import csvManip
+import csvManip as csvManip
 print("RUNNING TESTS\n------------------")
 
 #-------------------------------------------------
@@ -38,7 +38,13 @@ print("\tdeckWrapper Class passes all tests")
 #START CSV MANIP
 
 
+deckDict = {}
+classLists = []
+filename="tespaF2020OpenS2Finals.csv"
+csvManip.parse_csv(filename, deckDict, classLists)
 
+assert deckDict != {}, "Error reading into Deck Dictionary"
+assert deckDict["DQA into DQA"] != None, "Error when reading into deck dictionary"
 
 
 
