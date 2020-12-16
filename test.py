@@ -1,6 +1,6 @@
 import numpy as np
-
-print("RUNNING TESTS")
+import csvManip
+print("RUNNING TESTS\n------------------")
 
 #-------------------------------------------------
 # DECK WRAPPER
@@ -34,3 +34,27 @@ print("\tdeckWrapper Class passes all tests")
 #-------------------------------------------------
 
 
+#-------------------------------------------------
+#START CSV MANIP
+
+
+
+
+
+
+
+
+print("\tcsvManip Functions passing all tests")
+
+#END CSV MANIP
+#-------------------------------------------------
+
+
+
+
+
+
+
+
+
+print("------------------\nALL TESTS PASSING")
