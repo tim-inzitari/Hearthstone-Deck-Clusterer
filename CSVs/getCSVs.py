@@ -5,6 +5,7 @@ import sys
 import os
 import csv
 import datetime
+import thread
 
 
 getTournyIDs = []
@@ -18,9 +19,9 @@ for tourny in getTournyIDs:
 count = 1
 
 
-for x in range(0, 30):
-	stage = tournyIDs[x]
-	tourny = getTournyIDs[x]
+
+
+def parseTournament(stage, tourny):
 	print(tourny)
 	data= requests.get("https://dtmwra1jsgyb0.cloudfront.net/stages/{}/matches?roundNumber=1".format(stage)).json()
 	#print(type(data))
@@ -42,6 +43,11 @@ for x in range(0, 30):
 	filepath = "csv.csv"
 
 
+	myString= ""
+	for match in matches:
+		data=requests.get("https://majestic.battlefy.com/tournaments/{}/matches/{}/deckstrings".format(tourny, match['_id'])).json()
+		myString+="\n"+"{}_{}".format(count, match['top']['team']['name']).replace("\n", "").replace(",","") + ","+"{}".format(data['top'][0]).replace("\n", "").replace(",","")+","+ "{}".format(data['top'][1]).replace("\n", "").replace(",","")+","+"{}".format(data['top'][2]).replace("\n", "").replace(",","")
+
 	with open(filepath, "a", newline='\n', encoding='utf-8') as csvfile:
 		csvWriter = csv.writer(csvfile, delimiter=",", quotechar='"', quoting = csv.QUOTE_NONE, escapechar='~')
 		if os.stat(filepath).st_size == 0:
@@ -52,4 +58,3 @@ for x in range(0, 30):
 			csvWriter.writerow(["{}_{}".format(count, match['top']['team']['name']).replace("\n", "").replace(",",""), "{}".format(data['top'][0]).replace("\n", "").replace(",",""), "{}".format(data['top'][1]).replace("\n", "").replace(",",""), "{}".format(data['top'][2]).replace("\n", "").replace(",","")])
 			if match['isBye'] =="False":
 				csvWriter.writerow(["{}_{}".format(count,match['bottom']['team']['name']).replace("\n", "").replace(",",""), "{}".format(data['bottom'][0]).replace("\n", "").replace(",",""), "{}".format(data['bottom'][1]).replace("\n", "").replace(",",""), "{}".format(data['bottom'][2]).replace("\n", "").replace(",","")])
-	count +=1
