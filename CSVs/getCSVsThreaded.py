@@ -9,6 +9,9 @@ import multiprocessing
 from multiprocessing.pool import Pool
 from itertools import product
 
+NUM_TOURNEYS = 30
+NUM_PROCESSSES = 10
+
 def parseTournament(stage, tourny, count):
 	print("Start tourny {} id: {}".format(count+1, tourny))
 	data= requests.get("https://dtmwra1jsgyb0.cloudfront.net/stages/{}/matches?roundNumber=1".format(stage)).json()
@@ -26,7 +29,6 @@ def parseTournament(stage, tourny, count):
 	#print(matches)
 	data = requests.get("https://majestic.battlefy.com/tournaments/{}/matches/{}/deckstrings".format(tourny, matches[4]['_id'])).json()
 	#print(data['top'][1])
-
 	
 
 
@@ -37,6 +39,7 @@ def parseTournament(stage, tourny, count):
 		if match['isBye'] =="False":
 			myString+="\n"+"{}_{}".format(count+1, match['bottom']['team']['name']).replace("\n", "").replace(",","") + ","+"{}".format(data['bottom'][0]).replace("\n", "").replace(",","")+","+ "{}".format(data['bottom'][1]).replace("\n", "").replace(",","")+","+"{}".format(data['bottom'][2]).replace("\n", "").replace(",","")
 
+	print("End Tourny {}".format(count+1))
 	return myString
 
 #	with open(filepath, "a", newline='\n', encoding='utf-8') as csvfile:
@@ -61,13 +64,16 @@ def main():
 		data = requests.get("https://majestic.battlefy.com/tournaments/{}/".format(tourny)).json()
 		tournyIDs.append(data['stageIDs'][0])
 	filepath = "csv.csv"
-	p = Pool(processes = 10)
-	returnData = p.starmap(parseTournament, zip(tournyIDs, getTournyIDs, range(30)))
+	p = Pool(processes = NUM_PROCESSSES)
+	returnData = p.starmap(parseTournament, zip(tournyIDs, getTournyIDs, range(NUM_TOURNEYS)))
 	p.close()
 	p.join()
 
+
+	print("Start CSV file write:")
 	with open(filepath, "a", newline='\n', encoding='utf-8') as csvfile:
-		csvfile.write("K,D,D,D")
+		if os.stat(filepath).st_size == 0:
+			csvfile.write("K,D,D,D")
 		for processString in returnData:
 			split = processString.split(",")
 			for line in split:
