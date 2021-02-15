@@ -5,7 +5,6 @@ import sys
 import os
 import csv
 import datetime
-import thread
 
 
 getTournyIDs = []
