@@ -3,7 +3,20 @@ import csvManip as csvManip
 print("RUNNING TESTS\n------------------")
 
 #-------------------------------------------------
+# getClusterCounts
+
+from getClusterCounts import *
+
+
+#count = getClusterCounts()
+#print(getClusterCounts())
+assert(getClusterCounts([4,5,6,8,9,10,3,4,5,10])== [4,5,6,8,9,10,3,4,5,10]), "Error in getClusterCounts.py getClusterCounts: Preset Input Failure"
+print("\n\tGetClusterCounts.py passing all tests")
+#-------------------------------------------------
 # DECK WRAPPER
+print("\n\tStart deckWrapper.py Tests")
+
+
 from deckWrapper import DeckWrapper
 from typing import List
 
@@ -20,15 +33,15 @@ assert len(deck.cardList) == 30, "Error in Card Parsing"
 #for i in testList:
 	#assert deck.cardList[i] == testList[i], "Error in deckWrapper Class when parsing Card List"
 assert deck.classification == "NOCLASSIFY", "Error in deckWrapper with Classification initialization"
-print((deck.cardList))
+#print((deck.cardList))
 
 
 deck = DeckWrapper("MalfTest", 4, "AAECAZICBvIFrqsClL0C+cACws4CmdMCDEBf/gHEBuQItLsCy7wCz7wC3b4CyccCoM0Ch84CAA==")
 assert deck.ingameClass == "druid", "Error in deckWrapper Class when parsing alternate hero portraits"
 
-print("\tdeckWrapper Class passes all tests")
+print("\t\tdeckWrapper Class passes all tests")
 
-
+print("\tdeckWrapper.py passing all tests")
 
 #END DECK WRAPPER
 #-------------------------------------------------
@@ -36,7 +49,7 @@ print("\tdeckWrapper Class passes all tests")
 
 #-------------------------------------------------
 #START CSV MANIP
-
+print("\n\tStart csvManip.py tests")
 
 deckDict = {}
 classLists = []
@@ -52,7 +65,7 @@ print("\t\tStart Long Parse, PARALIZE THIS")
 deckDict = {}
 classLists = []
 linecount = 0
-filename = "CSVs/MTQ_IF_1to2.csv"
+filename = "CSVs/MTQ_IF_1to24.csv"
 
 # THIS TAKES TOO LONG, NEEDS TO BE PARALLIZED OR SOMETHING
 deckDict, classLists, linecount = csvManip.parse_csv(filename, deckDict, classLists)
@@ -73,8 +86,8 @@ deckDict, classLists, linecount = csvManip.parse_csv(filename, deckDict, classLi
 # This error was discovered by manually submitting Deck Codes to a battlefy api, and my system for checking, and discovering the fault
 # All cases involved players that had Identities from the Chinese servers which are not managed by Blizzard Entertainment and may be the cause
 assert((len(classLists[0])+len(classLists[1])+len(classLists[2])+len(classLists[3])+len(classLists[4])+len(classLists[5])+len(classLists[6])+len(classLists[7])+len(classLists[8])+len(classLists[9])) >= (linecount*3-(linecount*3)//100)), "Error parsing decks, total count is wrong"
-
-print("\tcsvManip Functions passing all tests")
+print("\t\tparse_csv.py Function Tests Pass")
+print("\tcsvManip.py passing all tests")
 
 #END CSV MANIP
 #-------------------------------------------------
@@ -84,7 +97,7 @@ print("\tcsvManip Functions passing all tests")
 #START DECK VECTOR
 from deckVector import *
 
-print("\n\tStart deckVector Tests")
+print("\n\tStart deckVector.py Tests")
 
 
 #test deck1 has only 1 drops"
@@ -133,10 +146,63 @@ assert(getCardSetVector(deck2) ==[0.0, 0.0, 0.23333333333333334, 0.2, 0.0, 0.0, 
 assert(getCardSetVector(deck3) == [0.0, 0.0, 0.13333333333333333, 0.03333333333333333, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.03333333333333333, 0.13333333333333333, 0.16666666666666666, 0.0, 0.13333333333333333, 0.0, 0.26666666666666666, 0.0, 0.0, 0.1, 0.0]), "Failed Test Deck 3 on deckVector.py getCardSetVector"
 print("\t\tgetCardSetVector Tests Pass")
 
-print("\tdeckVector Functions passing all tests")
+print("\tdeckVector.py Functions passing all tests")
 
 #END deck Vectors
 #-------------------------------------------------
 
 
-print("------------------\nALL TESTS PASSING")
+
+#-------------------------------------------------
+#START CLUSTERS
+print("\n\tStart clusters.py Tests")
+
+
+from clusters import *
+
+def print_pretty_decks(player_class, clusters):
+	print("Printing Clusters For: %s" % player_class)
+	for cluster in clusters:
+		print("%s" % str(cluster))
+		for deck in cluster.decks:
+			print("\t%s" % deck.deckCode)
+
+
+superCluster = -2
+cluster1 = Cluster.create(Cluster, superCluster, -1, [])
+assert(str(cluster1) == "Cluster Id: -1 Name: NEW"), "Test Failed clusters.py Cluster Class, string conversion"
+cluster2 = Cluster.create(Cluster, superCluster, -1, [], name="TEST")
+assert(str(cluster2) == "Cluster Id: -1 Name: TEST"), "Test Failed clusters.py Cluster Class, preset name"
+
+print("\t\tCluster Class Tests Passed")
+
+
+classCluster1 = ClassCluster.create(ClassCluster, superCluster, "Mage", [cluster1, cluster2])
+assert(classCluster1 is not None), "Test Failed clusters.py ClassCluster Class, Error Creating Class Cluster"
+
+print("\t\tClassCluster Class Tests Passed")
+
+
+
+print("\t\tSuperCluster Class Tests Passed")
+
+print("\t\tSTART CLUSTER TEST")
+deckDict, classLists, linecount = csvManip.parse_csv("CSVs/MTQ_IF_1to24.csv", deckDict, classLists)
+for c in classLists:
+	num = 0
+	for l in c:
+		assert(len(l.cardList)==30), "Error at class: {} entry {}, len{}  player: {}".format(c[0].ingameClass,num, len(l.cardList), l.teamName)
+		num+=1
+
+superCluster = createSuperCluster(classLists, clusterNumbers=getClusterCounts([6,6,8,4,3,6,4,6,4,2]))
+print(type(superCluster))
+dhClusters = superCluster.getClassClusterByName("DEMONHUNTER")
+print(type(dhClusters))
+print_pretty_decks("DEMONHUNTER", dhClusters.clusters)
+print(superCluster.chartifyData)
+
+print("\tclusters.py Functions and Classes passing all tests")
+#END CLUSTERS
+#-------------------------------------------------
+
+print("\n------------------\nALL TESTS PASSING")

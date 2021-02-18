@@ -15,7 +15,7 @@ CARDCOUNT = 30
 
 
 
-
+# Check if the deck is Highlander (no duplicate cards)
 def isHighlander(myDeck):
 	# need compressed list you originally get
 	return len(myDeck.deck.get_dbf_id_list())==30
@@ -117,3 +117,13 @@ def getCardSetVector(myDeck):
 		setVector[card.card_set] +=1
 
 	return [float(setVector[s])/CARDCOUNT for s in CardSet]
+
+
+def getReducedSetVector(hero=None):
+	if hero:
+		heroes = (CardClass[hero], CardClass.NEUTRAL)
+		allCards = [c for c in db.values() if c.collectible and c.card_class in heroes]
+	else:
+		allCards = [c for c in db.values() if c.collectible]
+
+	return [c.dbf_id for c in sorted(allCards, key=lambda c: c.dbf_id)]

@@ -59,7 +59,7 @@ def parse_csv(filename, deckDict, classLists):
 
 	deckDict = {}
 
-	classLists = np.empty(10)
+	classLists = np.empty(10, dtype=object)
 	with io.open(filename, "r", encoding = "utf-8") as csvfile:
 		deckreader = list(csv.reader(csvfile, delimiter=u','))
 
