@@ -68,6 +68,7 @@ def parse_csv(filename, deckDict, classLists):
 	schema = []
 	key = 0
 	start = 1
+	linecount = 0
 	uniqueIDCounter = 0
 	deckstring = ""
 
@@ -94,7 +95,7 @@ def parse_csv(filename, deckDict, classLists):
 	#parse every line after schemaline
 	for row in deckreader[start:]:
 		name = row[key]
-
+		linecount += 1
 		if name not in deckDict:
 			deckDict[name] = []
 
@@ -153,5 +154,5 @@ def parse_csv(filename, deckDict, classLists):
 					exit(0)
 
 
-	classLists = np.array([dhA, dA, hA, mA, paA, prA, rA, sA, wlA, wrA])
-	return deckDict, classLists
+	classLists = np.array([dhA, dA, hA, mA, paA, prA, rA, sA, wlA, wrA], dtype=object)
+	return deckDict, classLists, linecount
