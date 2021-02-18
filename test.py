@@ -65,7 +65,7 @@ print("\t\tStart Long Parse, PARALIZE THIS")
 deckDict = {}
 classLists = []
 linecount = 0
-filename = "CSVs/MTQ_IF_1to2.csv"
+filename = "CSVs/MTQ_IF_1to24.csv"
 
 # THIS TAKES TOO LONG, NEEDS TO BE PARALLIZED OR SOMETHING
 deckDict, classLists, linecount = csvManip.parse_csv(filename, deckDict, classLists)
@@ -160,6 +160,13 @@ print("\n\tStart clusters.py Tests")
 
 from clusters import *
 
+def print_pretty_decks(player_class, clusters):
+	print("Printing Clusters For: %s" % player_class)
+	for cluster in clusters:
+		print("%s" % str(cluster))
+		for deck in cluster.decks:
+			print("\t%s" % deck.deckCode)
+
 
 superCluster = -2
 cluster1 = Cluster.create(Cluster, superCluster, -1, [])
@@ -180,14 +187,19 @@ print("\t\tClassCluster Class Tests Passed")
 print("\t\tSuperCluster Class Tests Passed")
 
 print("\t\tSTART CLUSTER TEST")
-deckDict, classLists, linecount = csvManip.parse_csv("CSVs/csvs.csv", deckDict, classLists)
+deckDict, classLists, linecount = csvManip.parse_csv("CSVs/MTQ_IF_1to24.csv", deckDict, classLists)
 for c in classLists:
 	num = 0
 	for l in c:
 		assert(len(l.cardList)==30), "Error at class: {} entry {}, len{}  player: {}".format(c[0].ingameClass,num, len(l.cardList), l.teamName)
 		num+=1
 
-superCluster = createSuperCluster(classLists)
+superCluster = createSuperCluster(classLists, clusterNumbers=getClusterCounts([6,6,8,4,3,6,4,6,4,2]))
+print(type(superCluster))
+dhClusters = superCluster.getClassClusterByName("DEMONHUNTER")
+print(type(dhClusters))
+print_pretty_decks("DEMONHUNTER", dhClusters.clusters)
+print(superCluster.chartifyData)
 
 print("\tclusters.py Functions and Classes passing all tests")
 #END CLUSTERS

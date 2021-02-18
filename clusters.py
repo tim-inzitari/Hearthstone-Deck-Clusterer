@@ -2,7 +2,7 @@ import json
 from hearthstone.enums import CardClass
 from copy import deepcopy #we want new values not reference values on copy
 
-
+import matplotlib.pyplot as plt
 
 from deckVector import *
 from deckWrapper import *
@@ -178,11 +178,14 @@ class SuperCluster:
 
 	def getClassClusterByName(self, gameClassName):
 		myClass = int(CardClass[gameClassName])
+		#print(myClass)
+		print(self.myClassClusters)
 		for cc in self.myClassClusters:
-			if cc.inGameClass == gameClassName:
+			print(cc.getInGameClass)
+			if cc.inGameClass == myClass:
 				return cc
-
-		return None
+		print("FAIL")
+		
 
 		# Function to convert to a dictionary for input usage
 	def convertToDict(self):
@@ -302,13 +305,14 @@ def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=CLUSTER_NUMBE
 		clusters = []
 		for id, dataPointIter in dpsInCluster.items():
 			clusters.append(Cluster.create(superCluster.CLUSTER_FACTORY, superCluster, id, dataPointIter))
-
+		print(len(clusters))
+		print(type(clusters))
 		classCluster = ClassCluster.create(superCluster.CLASS_FACTORY, superCluster, int(CardClass[hero]), clusters)
-
 		classClusters.append(classCluster)
-		clusterCountMover +=1 
+
 		logger.info("END Clustering for: {}\n\n".format(hero))
 	superCluster.myClassClusters = classClusters
+
 
 
 	return superCluster
