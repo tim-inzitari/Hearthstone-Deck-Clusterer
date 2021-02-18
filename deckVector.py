@@ -1,6 +1,6 @@
 import json
 from hearthstone import deckstrings
-from hearthstone.enums import CardType, GameTag, Race
+from hearthstone.enums import CardType, GameTag, Race, CardClass
 from collections import defaultdict
 from deckWrapper import DeckWrapper
 import numpy as np
@@ -90,5 +90,16 @@ def getKeyWordVector(myDeck):
 			kwArray.append(count/CARDCOUNT)
 
 	return kwArray
+
+def getClassNeutralVector(myDeck):
+
+	clNeutDict = defaultdict(int)
+
+	for dbId in myDeck.cardList:
+		card = db[int(dbId)]
+
+		clNeutDict[card.card_class]+=1
+
+	return [float(clNeutDict[cClass])/CARDCOUNT for cClass in CardClass]
 
 
