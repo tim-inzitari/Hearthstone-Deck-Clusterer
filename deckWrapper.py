@@ -4,6 +4,7 @@ from typing import List, Tuple
 import numpy as np
 import json
 
+
 #Hearthstone Card JSon needed for class parsing
 # https://api.hearthstonejson.com/v1/latest/enUS/cards.collectible.json
 cards_json = 'resources/cards.collectible.json'

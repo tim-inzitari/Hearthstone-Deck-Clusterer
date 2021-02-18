@@ -15,7 +15,7 @@ CARDCOUNT = 30
 
 
 
-
+# Check if the deck is Highlander (no duplicate cards)
 def isHighlander(myDeck):
 	# need compressed list you originally get
 	return len(myDeck.deck.get_dbf_id_list())==30

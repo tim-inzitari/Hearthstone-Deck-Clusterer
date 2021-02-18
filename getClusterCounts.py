@@ -1,4 +1,4 @@
-#Calculate the cluster count for each class 
+#Calculate the cluster count for each class from user input
 def getClusterCounts(counts=[]):
 	#If i don't input counts (for testing mainly)
 	if not counts:

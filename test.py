@@ -157,7 +157,7 @@ print("\tdeckVector.py Functions passing all tests")
 #START CLUSTERS
 print("\n\tStart clusters.py Tests")
 
-
+from clusters import *
 
 
 
@@ -169,4 +169,4 @@ print("\tclusters.py Functions and Classes passing all tests")
 #END CLUSTERS
 #-------------------------------------------------
 
-print("------------------\nALL TESTS PASSING")
+print("\n------------------\nALL TESTS PASSING")
