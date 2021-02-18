@@ -12,7 +12,7 @@ from getClusterCounts import *
 
 CLASSES=["DEMONHUNTER", 'DRUID', 'HUNTER', 'MAGE', 'PALADIN', 'PRIEST', 'ROGUE', 'SHAMAN', 'WARLOCK', 'WARRIOR']
 db = card_db()
-CLUSTER_NUMBERS = getClusterCounts([3,3,3,3,3,3,3,3,3,3])
+CLUSTER_NUMBERS = getClusterCounts()
 
 
 #Clustering process wants a more precise log for debug purposes
@@ -292,7 +292,7 @@ def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=CLUSTER_NUMBE
 
 
 		X = StandardScaler().fit_transform(X)
-		myClusterMaker = KMeans(n_clusters=min(int(CLUSTER_NUMBERS[clusterCountMover]), len(X)))
+		myClusterMaker = KMeans(n_clusters=min(CLUSTER_NUMBERS[clusterCountMover], len(X)))
 
 		
 
@@ -309,7 +309,7 @@ def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=CLUSTER_NUMBE
 		print(type(clusters))
 		classCluster = ClassCluster.create(superCluster.CLASS_FACTORY, superCluster, int(CardClass[hero]), clusters)
 		classClusters.append(classCluster)
-
+		clusterCountMover +=1
 		logger.info("END Clustering for: {}\n\n".format(hero))
 	superCluster.myClassClusters = classClusters
 

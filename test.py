@@ -194,7 +194,7 @@ for c in classLists:
 		assert(len(l.cardList)==30), "Error at class: {} entry {}, len{}  player: {}".format(c[0].ingameClass,num, len(l.cardList), l.teamName)
 		num+=1
 
-superCluster = createSuperCluster(classLists, clusterNumbers=getClusterCounts([6,6,8,4,3,6,4,6,4,2]))
+superCluster = createSuperCluster(classLists)
 print(type(superCluster))
 dhClusters = superCluster.getClassClusterByName("DEMONHUNTER")
 print(type(dhClusters))

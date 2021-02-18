@@ -5,8 +5,10 @@ def getClusterCounts(counts=[]):
 		print("Input Cluster Counts for each Class in following format:")
 		print("DH Druid Hunter Mage Paladin Priest Rogue Shaman Warlock Warrior")
 		print("Example:\n1 2 3 4 5 6 7 8 9 10")
-		dh, d, h, m, pa, pr, r, s, l, w = int(input().split())
-		counts = [dh, d, h, m ,pa, pr, r, s, l, w]
+		myInputer = (input()).split()
+		counts = []
+		for i in myInputer:
+			counts.append(int(i))
 
 	return counts
 	
