@@ -123,9 +123,15 @@ assert(getKeyWordVector(deck1)== [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0333
 print("\t\tgetKeyWordVector Tests Pass")
 
 
-print(getClassNeutralVector(deck1))
-print("\t\tgetClassNeutral Tests Pass")
+assert(getClassNeutralVector(deck1) == [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.8333333333333334, 0.0, 0.0, 0.0, 0.0, 0.16666666666666666, 0.0, 0.0]), "Failed Test Deck 1 on deckVector.py getCardNeutralVector"
+assert(getClassNeutralVector(deck2) == [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0]), "Failed Test Deck 2 on deckVector.py getCardNeutralVector"
+assert(getClassNeutralVector(deck3) == [0.0, 0.0, 0.0, 0.0, 0.0, 0.03333333333333333, 0.6333333333333333, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3333333333333333, 0.0, 0.0]), "Failed Test Deck 3 on deckVector.py getCardNeutralVector"
+print("\t\tgetClassNeutralVector Tests Pass")
 
+assert(getCardSetVector(deck1) == [0.0, 0.0, 0.13333333333333333, 0.06666666666666667, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.06666666666666667, 0.1, 0.2, 0.0, 0.13333333333333333, 0.0, 0.16666666666666666, 0.0, 0.0, 0.13333333333333333, 0.0]), "Failed Test Deck 1 on deckVector.py getCardSetVector"
+assert(getCardSetVector(deck2) ==[0.0, 0.0, 0.23333333333333334, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.0, 0.13333333333333333, 0.0, 0.2, 0.0, 0.06666666666666667, 0.0, 0.0, 0.06666666666666667, 0.0]), "Failed Test Deck 2 on deckVector.py getCardSetVector"
+assert(getCardSetVector(deck3) == [0.0, 0.0, 0.13333333333333333, 0.03333333333333333, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.03333333333333333, 0.13333333333333333, 0.16666666666666666, 0.0, 0.13333333333333333, 0.0, 0.26666666666666666, 0.0, 0.0, 0.1, 0.0]), "Failed Test Deck 3 on deckVector.py getCardSetVector"
+print("\t\tgetCardSetVector Tests Pass")
 
 print("\tdeckVector Functions passing all tests")
 

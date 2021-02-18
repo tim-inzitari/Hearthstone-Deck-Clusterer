@@ -1,6 +1,6 @@
 import json
 from hearthstone import deckstrings
-from hearthstone.enums import CardType, GameTag, Race, CardClass
+from hearthstone.enums import CardType, GameTag, CardClass, CardSet
 from collections import defaultdict
 from deckWrapper import DeckWrapper
 import numpy as np
@@ -91,6 +91,8 @@ def getKeyWordVector(myDeck):
 
 	return kwArray
 
+
+#Generate a vector for how many cards are Class cards vs Neutral Cards
 def getClassNeutralVector(myDeck):
 
 	clNeutDict = defaultdict(int)
@@ -103,3 +105,15 @@ def getClassNeutralVector(myDeck):
 	return [float(clNeutDict[cClass])/CARDCOUNT for cClass in CardClass]
 
 
+
+# Generate a Vector for how many cards are from each set
+def getCardSetVector(myDeck):
+
+	setVector = defaultdict(int)
+
+	for dbId in myDeck.cardList:
+		card = db[int(dbId)]
+
+		setVector[card.card_set] +=1
+
+	return [float(setVector[s])/CARDCOUNT for s in CardSet]
