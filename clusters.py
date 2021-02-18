@@ -22,7 +22,14 @@ import logging
 #create logger
 logger = logging.getLogger('clustering')
 logger.setLevel(logging.DEBUG)
-fileHandler = logging.FileHandler("clustering.log")
+
+formatter = logging.Formatter('%(levelname)s %(asctime)s:\t %(message)s', 
+                    datefmt='%m/%d/%Y%I:%M:%S %p')
+
+fileHandler = logging.FileHandler("clustering.log", 'w')
 fileHandler.setLevel(logging.DEBUG)
+fileHandler.setFormatter(formatter)
+
 logger.addHandler(fileHandler)
 
+logger.info("START NEW\n--------------------------------------------------------------------------")
