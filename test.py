@@ -4,6 +4,9 @@ print("RUNNING TESTS\n------------------")
 
 #-------------------------------------------------
 # DECK WRAPPER
+print("\n\tStart deckWrapper.py Tests")
+
+
 from deckWrapper import DeckWrapper
 from typing import List
 
@@ -20,15 +23,15 @@ assert len(deck.cardList) == 30, "Error in Card Parsing"
 #for i in testList:
 	#assert deck.cardList[i] == testList[i], "Error in deckWrapper Class when parsing Card List"
 assert deck.classification == "NOCLASSIFY", "Error in deckWrapper with Classification initialization"
-print((deck.cardList))
+#print((deck.cardList))
 
 
 deck = DeckWrapper("MalfTest", 4, "AAECAZICBvIFrqsClL0C+cACws4CmdMCDEBf/gHEBuQItLsCy7wCz7wC3b4CyccCoM0Ch84CAA==")
 assert deck.ingameClass == "druid", "Error in deckWrapper Class when parsing alternate hero portraits"
 
-print("\tdeckWrapper Class passes all tests")
+print("\t\tdeckWrapper Class passes all tests")
 
-
+print("\tdeckWrapper.py passing all tests")
 
 #END DECK WRAPPER
 #-------------------------------------------------
@@ -36,7 +39,7 @@ print("\tdeckWrapper Class passes all tests")
 
 #-------------------------------------------------
 #START CSV MANIP
-
+print("\n\tStart csvManip.py tests")
 
 deckDict = {}
 classLists = []
@@ -73,8 +76,8 @@ deckDict, classLists, linecount = csvManip.parse_csv(filename, deckDict, classLi
 # This error was discovered by manually submitting Deck Codes to a battlefy api, and my system for checking, and discovering the fault
 # All cases involved players that had Identities from the Chinese servers which are not managed by Blizzard Entertainment and may be the cause
 assert((len(classLists[0])+len(classLists[1])+len(classLists[2])+len(classLists[3])+len(classLists[4])+len(classLists[5])+len(classLists[6])+len(classLists[7])+len(classLists[8])+len(classLists[9])) >= (linecount*3-(linecount*3)//100)), "Error parsing decks, total count is wrong"
-
-print("\tcsvManip Functions passing all tests")
+print("\t\tparse_csv.py Function Tests Pass")
+print("\tcsvManip.py passing all tests")
 
 #END CSV MANIP
 #-------------------------------------------------
@@ -84,7 +87,7 @@ print("\tcsvManip Functions passing all tests")
 #START DECK VECTOR
 from deckVector import *
 
-print("\n\tStart deckVector Tests")
+print("\n\tStart deckVector.py Tests")
 
 
 #test deck1 has only 1 drops"
@@ -133,10 +136,18 @@ assert(getCardSetVector(deck2) ==[0.0, 0.0, 0.23333333333333334, 0.2, 0.0, 0.0, 
 assert(getCardSetVector(deck3) == [0.0, 0.0, 0.13333333333333333, 0.03333333333333333, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.03333333333333333, 0.13333333333333333, 0.16666666666666666, 0.0, 0.13333333333333333, 0.0, 0.26666666666666666, 0.0, 0.0, 0.1, 0.0]), "Failed Test Deck 3 on deckVector.py getCardSetVector"
 print("\t\tgetCardSetVector Tests Pass")
 
-print("\tdeckVector Functions passing all tests")
+print("\tdeckVector.py Functions passing all tests")
 
 #END deck Vectors
 #-------------------------------------------------
 
+
+
+#-------------------------------------------------
+#START CLUSTERS
+print("\tStart clusters.py Tests")
+print("\tclusters.py Functions and Classes passing all tests")
+#END CLUSTERS
+#-------------------------------------------------
 
 print("------------------\nALL TESTS PASSING")
