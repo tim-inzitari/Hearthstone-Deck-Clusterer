@@ -79,24 +79,68 @@ class Cluster:
 			deck.clusterID = self.clusterID
 			deck.classification = self.name
 
+
+	#convert to json for an output
 	def jsonify(self):
 		json = {"clusterID": self.clusterID, "name": self.name, "decks": self.decks} 
 		return json
 
 
-
-	#String Casting
 	def __str__(self):
-		#Diff ways to identify and return that
-		output = None
-		if self.name:
-			output = self.name
-		elif self.clusterID:
-			output = self.clusterID
+		clustID = self.clusterID
+		clustName = self.name
 
-		return output
+
+		return("Cluster Id: {} Name: {}".format(clustID, clustName))
+
+
 
 	def __repr__(self):
 		return str(self)
 
-	
+# Collection of clusters sorted by class
+class ClassCluster:
+
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		self._factory = None
+		self._superCluster = None
+
+	#create function
+	@staticmethod
+	def create(factory, superCluster, inGameClass, clusters):
+		self = factory()
+		self._factory = factory
+		self._superCluster = superCluster
+
+		self.inGameClass = inGameClass
+		self.clusters = clusters
+
+		return self
+
+
+	#string conversion
+	def __str__(self):
+		return "{} Set, contains {} clusters".format(self.inGameClass, len(self.clusters))
+
+	def __repr__(self):
+		return str(self)
+
+
+	@property
+	def getInGameClass(self):
+		return CardClass(self.inGameClass).name
+
+	# Send to json for an output
+	def jsonify(self):
+		result = {"inGameClass": self.getInGameClass, "clusters": []}
+		for cluster in self.clusters:
+			result["clusters"].append(cluster.jsonify())
+
+		return result
+
+
+	# Function to convert to a dictionary for input usage
+	def convertToDict(self):
+		for cluster in self.clusters:
+			yield(cluster.clusterID, cluster.decks)
