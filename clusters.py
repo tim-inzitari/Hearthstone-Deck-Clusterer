@@ -12,7 +12,7 @@ from getClusterCounts import *
 
 CLASSES=["DEMONHUNTER", 'DRUID', 'HUNTER', 'MAGE', 'PALADIN', 'PRIEST', 'ROGUE', 'SHAMAN', 'WARLOCK', 'WARRIOR']
 db = card_db()
-CLUSTER_NUMBERS = getClusterCounts()
+CLUSTER_NUMBERS = getClusterCounts(counts=[4,4,4,4,4,4,4,4,4,4])
 
 
 #Clustering process wants a more precise log for debug purposes

@@ -1,10 +1,11 @@
 import numpy as np
 import csvManip as csvManip
 print("RUNNING TESTS\n------------------")
-
+import pandas as pd
+import os
 #-------------------------------------------------
 # getClusterCounts
-
+CLASSES=["DEMONHUNTER", 'DRUID', 'HUNTER', 'MAGE', 'PALADIN', 'PRIEST', 'ROGUE', 'SHAMAN', 'WARLOCK', 'WARRIOR']
 from getClusterCounts import *
 
 
@@ -159,13 +160,31 @@ print("\n\tStart clusters.py Tests")
 
 
 from clusters import *
+import subprocess
 
 def print_pretty_decks(player_class, clusters):
 	print("Printing Clusters For: %s" % player_class)
+	i = 0
+	L = []
 	for cluster in clusters:
 		print("%s" % str(cluster))
+		j = 0
 		for deck in cluster.decks:
-			print("\t%s" % deck.deckCode)
+			#print("\t%s" % deck.deckCode)
+			L.append(("c{}.{}".format(i,j),deck.deckCode))
+			j+=1
+		i+=1
+
+	#write to CSV
+	uniqueID = "{}{}".format(player_class, i)
+	directName = "outputs/{}".format(player_class)
+	if not os.path.exists("{}".format(directName)):
+		os.mkdir("{}".format(directName))
+	if not os.path.exists("{}/{}".format(directName, i)):
+		os.mkdir("{}/{}".format(directName, i))
+	df = pd.DataFrame(L, columns=['K', 'D'])
+	df.to_csv("{}/{}/{}.csv".format(directName,i, uniqueID), encoding='utf-8', index=False, mode='w')
+
 
 
 superCluster = -2
@@ -196,9 +215,13 @@ for c in classLists:
 
 superCluster = createSuperCluster(classLists)
 print(type(superCluster))
-dhClusters = superCluster.getClassClusterByName("DEMONHUNTER")
-print(type(dhClusters))
-print_pretty_decks("DEMONHUNTER", dhClusters.clusters)
+
+for class_ in CLASSES:
+	aCC = superCluster.getClassClusterByName(class_)
+	print_pretty_decks(class_, aCC.clusters)
+
+
+
 print(superCluster.chartifyData)
 
 print("\tclusters.py Functions and Classes passing all tests")
