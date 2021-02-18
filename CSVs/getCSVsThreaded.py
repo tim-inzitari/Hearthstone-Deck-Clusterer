@@ -12,7 +12,7 @@ from itertools import product
 
 NUM_PROCESSSES = 20
 START_DATE = "2021-01-16" #YYYY-MM-DD
-END_DATE = "2021-01-31"#YYYY-MM-DD
+END_DATE = "2021-02-18"#YYYY-MM-DD
 
 def parseTournament(stage, tourny, count):
 	print("Start tourny {} id: {}".format(count+1, tourny))

@@ -28,6 +28,8 @@ class DeckWrapper:
 		self.deck = deckstrings.Deck().from_deckstring(self.deckCode)
 		self.cardList = []
 		self.classification = "NOCLASSIFY"
+		self.x = -1
+		self.y = -1
 
 		for cardTuple in self.deck.get_dbf_id_list():
 			self.cardList.append(cardTuple[0])
@@ -36,3 +38,6 @@ class DeckWrapper:
 
 		self.ingameClass = card_dict[self.deck.heroes[0]]
 		self.ingameClass = self.ingameClass['cardClass'].lower()
+
+	def __getitem__(self, key):
+		return getattr(self, key)

@@ -117,3 +117,13 @@ def getCardSetVector(myDeck):
 		setVector[card.card_set] +=1
 
 	return [float(setVector[s])/CARDCOUNT for s in CardSet]
+
+
+def getReducedSetVector(hero=None):
+	if hero:
+		heroes = (CardClass[hero], CardClass.NEUTRAL)
+		allCards = [c for c in db.values() if c.collectible and c.card_class in heroes]
+	else:
+		allCards = [c for c in db.values() if c.collectible]
+
+	return [c.dbf_id for c in sorted(allCards, key=lambda c: c.dbf_id)]

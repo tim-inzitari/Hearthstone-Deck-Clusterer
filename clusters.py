@@ -10,7 +10,7 @@ from cardDB import *
 from getClusterCounts import *
 
 
-
+CLASSES=["DEMONHUNTER", 'DRUID', 'HUNTER', 'MAGE', 'PALADIN', 'PRIEST', 'ROGUE', 'SHAMAN', 'WARLOCK', 'WARRIOR']
 db = card_db()
 CLUSTER_NUMBERS = getClusterCounts([3,3,3,3,3,3,3,3,3,3])
 
@@ -20,17 +20,23 @@ CLUSTER_NUMBERS = getClusterCounts([3,3,3,3,3,3,3,3,3,3])
 import logging
 
 #create logger
-logger = logging.getLogger('clustering')
-logger.setLevel(logging.DEBUG)
 
+logging.basicConfig(
+     level=logging.INFO, 
+     format= '[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s',
+     datefmt='%H:%M:%S'
+ )
 formatter = logging.Formatter('%(levelname)s %(asctime)s:\t %(message)s', 
                     datefmt='%m/%d/%Y%I:%M:%S %p')
+console = logging.StreamHandler()
+console.setLevel(logging.DEBUG)
 
-fileHandler = logging.FileHandler("clustering.log", 'w')
-fileHandler.setLevel(logging.DEBUG)
-fileHandler.setFormatter(formatter)
+console.setFormatter(formatter)
 
-logger.addHandler(fileHandler)
+
+
+
+logger = logging.getLogger('clustering')
 
 logger.info("START NEW\n--------------------------------------------------------------------------")
 
@@ -144,3 +150,166 @@ class ClassCluster:
 	def convertToDict(self):
 		for cluster in self.clusters:
 			yield(cluster.clusterID, cluster.decks)
+
+
+#Collection of ClassClusters
+#Used to save a configuration for later Classification
+class SuperCluster:
+
+	CLASS_FACTORY = ClassCluster
+	CLUSTER_FACTORY = Cluster
+
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		self._factory = None
+
+	def __str__(self):
+		result = "Cluster Set: "
+		myCCs = self.myClassClusters
+
+		for classCluster in myCCs:
+			result += "\n{}".format(str(classCluster))
+		return result
+
+
+	def __repr__(self):
+		return str(self)
+
+
+	def getClassClusterByName(self, gameClassName):
+		myClass = int(CardClass[gameClassName])
+		for cc in self.myClassClusters:
+			if cc.inGameClass == gameClassName:
+				return cc
+
+		return None
+
+		# Function to convert to a dictionary for input usage
+	def convertToDict(self):
+		for classCluster in self.myClassClusters:
+			yield(classCluster.inGameClass, classCluster.clusters)
+
+
+	def jsonify(self):
+		result= {"Date": self.dateUpdated, "classClusters": []}
+
+		for cc in self.myClassClusters:
+			result["classClusters"].append(cc.jsonify)
+
+		return json.dumps(result, indent=2)
+
+
+	def chartifyData(self, theDateUpdated=""):
+		result = []
+
+		for hero, clusters in self.items():
+			heroResult = {"inGameClass": CardClass(int(hero)).name, "data": [], "clustMap": {}, "clustNames": {}, "dateUpdated": theDateUpdated}
+
+			for clust in clusters:
+				heroResult["clustMap"][c.clusterID] =c.clusterID
+
+
+				for datapoint in clust.decks:
+					archetypeName = datapoint.classification
+					clusterID = int(data_point.clusterID)
+
+					metadata = {"clusterName": archetypeName, "clusterID": clusterID, "deckList":datapoint.cardList}
+
+					heroResult["data"].append({"x": datapoint["x"], "y": datapoint["y"], "metadata": metadata})
+			result.append(heroResult)
+
+		return result
+
+
+
+def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=CLUSTER_NUMBERS):
+	from sklearn import manifold
+	from sklearn.cluster import KMeans
+	from sklearn.preprocessing import StandardScaler
+
+
+	superCluster = scFact()
+	superCluster._factory= scFact
+
+	# deep copy because we need new instances
+	data = deepcopy(inData)
+	clusterCountMover = 0;
+	classClusters = []
+
+	for hero, dataPoints in zip(CLASSES, data):
+		logger.info("Start Clustering for: {}".format(hero))
+		X = []
+
+		reducedSetVector = getReducedSetVector(hero=hero)
+		logger.info("Base Cluster Length: %s" % len(reducedSetVector))
+		for dp in dataPoints:
+
+			#add all vectors for comparisons
+			cards = dp.deck.cards
+			cardDict = defaultdict(int)
+			for (i,j) in cards:
+				cardDict[i] = j
+			vector = [float(cardDict[i]) / 2.0 for dbId in reducedSetVector]
+
+			manaVector = (getManaCurveVector(dp))
+			vector.extend(manaVector)
+
+			vector.append(isHighlander(dp))
+
+			cardTypeVector = getCardTypeVector(dp)
+			vector.extend(cardTypeVector)
+
+			keyWordVector = getKeyWordVector(dp)
+			vector.extend(keyWordVector)
+
+			classNeutralVector = getClassNeutralVector(dp)
+			vector.extend(classNeutralVector)
+
+			cardSetVector = getCardSetVector(dp)
+			vector.extend(cardSetVector)
+
+			X.append(vector)
+
+		logger.info("Full Feature Vector Length: %s" % len(X[0]))
+		#do machine learning
+		# Use TSNE to help visualize the high dimensonal data
+		if len(dataPoints) > 1:
+			tsne = manifold.TSNE(n_components=2, init='pca', random_state=0)
+			xy = tsne.fit_transform(deepcopy(X))
+			for (x,y), dp in zip(xy, dataPoints):
+				dp.x = float(x)
+				dp.y = float(y)
+		elif len(dataPoints) == 1:
+				#in case of only one deck just dump it at origin
+			dataPoints[0].x = 0.0
+			dataPoints[0].y = 0.0
+		else:
+				#Nothing here
+			continue
+
+
+		X = StandardScaler().fit_transform(X)
+		myClusterMaker = KMeans(n_clusters=min(int(CLUSTER_NUMBERS[clusterCountMover]), len(X)))
+
+		
+
+		myClusterMaker.fit(X)
+
+		dpsInCluster = defaultdict(list)
+		for dp, cID in zip(dataPoints, myClusterMaker.labels_):
+			dpsInCluster[int(cID)].append(dp)
+
+		clusters = []
+		for id, dataPointIter in dpsInCluster.items():
+			clusters.append(Cluster.create(superCluster.CLUSTER_FACTORY, superCluster, id, dataPointIter))
+
+		classCluster = ClassCluster.create(superCluster.CLASS_FACTORY, superCluster, int(CardClass[hero]), clusters)
+
+		classClusters.append(classCluster)
+		clusterCountMover +=1 
+		logger.info("END Clustering for: {}\n\n".format(hero))
+	superCluster.myClassClusters = classClusters
+
+
+	return superCluster
+

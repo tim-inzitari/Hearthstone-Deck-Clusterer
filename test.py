@@ -175,6 +175,20 @@ assert(classCluster1 is not None), "Test Failed clusters.py ClassCluster Class, 
 
 print("\t\tClassCluster Class Tests Passed")
 
+
+
+print("\t\tSuperCluster Class Tests Passed")
+
+print("\t\tSTART CLUSTER TEST")
+deckDict, classLists, linecount = csvManip.parse_csv("CSVs/csvs.csv", deckDict, classLists)
+for c in classLists:
+	num = 0
+	for l in c:
+		assert(len(l.cardList)==30), "Error at class: {} entry {}, len{}  player: {}".format(c[0].ingameClass,num, len(l.cardList), l.teamName)
+		num+=1
+
+superCluster = createSuperCluster(classLists)
+
 print("\tclusters.py Functions and Classes passing all tests")
 #END CLUSTERS
 #-------------------------------------------------
