@@ -3,6 +3,16 @@ import csvManip as csvManip
 print("RUNNING TESTS\n------------------")
 
 #-------------------------------------------------
+# getClusterCounts
+
+from getClusterCounts import *
+
+
+#count = getClusterCounts()
+#print(getClusterCounts())
+assert(getClusterCounts([4,5,6,8,9,10,3,4,5,10])== [4,5,6,8,9,10,3,4,5,10]), "Error in getClusterCounts.py getClusterCounts: Preset Input Failure"
+print("\n\tGetClusterCounts.py passing all tests")
+#-------------------------------------------------
 # DECK WRAPPER
 print("\n\tStart deckWrapper.py Tests")
 
@@ -145,7 +155,16 @@ print("\tdeckVector.py Functions passing all tests")
 
 #-------------------------------------------------
 #START CLUSTERS
-print("\tStart clusters.py Tests")
+print("\n\tStart clusters.py Tests")
+
+
+
+
+
+
+
+
+
 print("\tclusters.py Functions and Classes passing all tests")
 #END CLUSTERS
 #-------------------------------------------------
