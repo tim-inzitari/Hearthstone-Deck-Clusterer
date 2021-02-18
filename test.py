@@ -157,11 +157,23 @@ print("\tdeckVector.py Functions passing all tests")
 #START CLUSTERS
 print("\n\tStart clusters.py Tests")
 
+def _create_datapoint(deck):
+	return {
+		"x": 0,
+		"y": 0,
+		"cards": {str(k): v for k, v in deck.items()},
+		"observations": 1
+	}
+
 from clusters import *
+superCluster = -2
+cluster1 = Cluster.create(Cluster, superCluster, -1, [])
+assert(str(cluster1) == "NEW"), "Test Failed clusters.py Cluster Class, string conversion"
+cluster2 = Cluster.create(Cluster, superCluster, -1, [], name="TEST")
+assert(str(cluster2) == "TEST"), "Test Failed clusters.py Cluster Class, preset name"
 
 
-
-
+print("\t\tCluster Class Tests Passed")
 
 
 

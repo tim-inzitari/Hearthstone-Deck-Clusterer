@@ -74,11 +74,29 @@ class Cluster:
 		return self
 
 	#Assign each deck to this cluster on creation
-	def _augment_data_points(self):
+	def _initializeDecks(self):
 		for deck in self.decks:
 			deck.clusterID = self.clusterID
 			deck.classification = self.name
 
+	def jsonify(self):
+		json = {"clusterID": self.clusterID, "name": self.name, "decks": self.decks} 
+		return json
+
+
 
 	#String Casting
-	#def __str__(self):
+	def __str__(self):
+		#Diff ways to identify and return that
+		output = None
+		if self.name:
+			output = self.name
+		elif self.clusterID:
+			output = self.clusterID
+
+		return output
+
+	def __repr__(self):
+		return str(self)
+
+	
