@@ -4,6 +4,13 @@ from typing import List, Tuple
 import numpy as np
 import json
 
+from json import JSONEncoder
+
+def _default(self, obj):
+    return getattr(obj.__class__, "jsonify", _default.default)(obj)
+
+_default.default = JSONEncoder().default
+JSONEncoder.default = _default
 
 #Hearthstone Card JSon needed for class parsing
 # https://api.hearthstonejson.com/v1/latest/enUS/cards.collectible.json
@@ -16,18 +23,17 @@ with open(cards_json, encoding="utf-8") as json_file:
 
 class DeckWrapper:
 
-	
 
 	# Constructor
-	def __init__(self, teamName, uID, deckString):
+	def __init__(self, teamName, uID, deckString, classification="NoClassify"):
 		self.deck = deckstrings.Deck()
-
+		self.classification = classification
 		self.teamName = teamName
 		self.uID = uID
 		self.deckCode = deckString
 		self.deck = deckstrings.Deck().from_deckstring(self.deckCode)
 		self.cardList = []
-		self.classification = "NOCLASSIFY"
+		
 		self.x = -1
 		self.y = -1
 
@@ -41,3 +47,7 @@ class DeckWrapper:
 
 	def __getitem__(self, key):
 		return getattr(self, key)
+
+	def jsonify(self):
+		json = {"uID": self.uID, "deckCode": self.deckCode, "classification": self.classification}
+		return json

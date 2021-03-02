@@ -163,11 +163,11 @@ from clusters import *
 import subprocess
 
 def print_pretty_decks(player_class, clusters):
-	print("Printing Clusters For: %s" % player_class)
+	#print("Printing Clusters For: %s" % player_class)
 	i = 0
 	L = []
 	for cluster in clusters:
-		print("%s" % str(cluster))
+		#print("%s" % str(cluster))
 		j = 0
 		for deck in cluster.decks:
 			#print("\t%s" % deck.deckCode)
@@ -206,23 +206,23 @@ print("\t\tClassCluster Class Tests Passed")
 print("\t\tSuperCluster Class Tests Passed")
 
 print("\t\tSTART CLUSTER TEST")
-deckDict, classLists, linecount = csvManip.parse_csv("CSVs/MTQ_IF_1to24.csv", deckDict, classLists)
+deckDict, classLists, linecount = csvManip.parse_csv("CSVs/csvs.csv", deckDict, classLists)
 for c in classLists:
 	num = 0
 	for l in c:
 		assert(len(l.cardList)==30), "Error at class: {} entry {}, len{}  player: {}".format(c[0].ingameClass,num, len(l.cardList), l.teamName)
 		num+=1
 
-superCluster = createSuperCluster(classLists)
-print(type(superCluster))
+for i in range(1, 11):
+	logger.info("START SuperCluster {}".format(i))
+	superCluster = createSuperCluster(classLists, clusterNumbers=getClusterCounts([i,i,i,i,i,i,i,i,i,i]))
+	for class_ in CLASSES:
+		aCC = superCluster.getClassClusterByName(class_)
+		print_pretty_decks(class_, aCC.clusters)
+	logger.info("FINISH SuperCluster {}".format(i))
 
-for class_ in CLASSES:
-	aCC = superCluster.getClassClusterByName(class_)
-	print_pretty_decks(class_, aCC.clusters)
 
-
-
-print(superCluster.chartifyData)
+#print(superCluster.chartifyData)
 
 print("\tclusters.py Functions and Classes passing all tests")
 #END CLUSTERS

@@ -1,7 +1,7 @@
 import json
 from hearthstone.enums import CardClass
 from copy import deepcopy #we want new values not reference values on copy
-
+from datetime import date
 import matplotlib.pyplot as plt
 
 from deckVector import *
@@ -10,9 +10,10 @@ from cardDB import *
 from getClusterCounts import *
 
 
+global CLUSTER_NUMBERS
 CLASSES=["DEMONHUNTER", 'DRUID', 'HUNTER', 'MAGE', 'PALADIN', 'PRIEST', 'ROGUE', 'SHAMAN', 'WARLOCK', 'WARRIOR']
 db = card_db()
-CLUSTER_NUMBERS = getClusterCounts(counts=[4,4,4,4,4,4,4,4,4,4])
+
 
 
 #Clustering process wants a more precise log for debug purposes
@@ -104,6 +105,12 @@ class Cluster:
 	def __repr__(self):
 		return str(self)
 
+	def updateNames(self):
+		for deck in self.decks:
+			#print(self.name)
+			deck.classification = "{} {}".format(self.name, deck.ingameClass)
+			#print(deck.classification)
+
 # Collection of clusters sorted by class
 class ClassCluster:
 
@@ -155,9 +162,9 @@ class ClassCluster:
 #Collection of ClassClusters
 #Used to save a configuration for later Classification
 class SuperCluster:
-
 	CLASS_FACTORY = ClassCluster
 	CLUSTER_FACTORY = Cluster
+	
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
@@ -179,9 +186,9 @@ class SuperCluster:
 	def getClassClusterByName(self, gameClassName):
 		myClass = int(CardClass[gameClassName])
 		#print(myClass)
-		print(self.myClassClusters)
+		#print(self.myClassClusters)
 		for cc in self.myClassClusters:
-			print(cc.getInGameClass)
+			#print(cc.getInGameClass)
 			if cc.inGameClass == myClass:
 				return cc
 		print("FAIL")
@@ -194,12 +201,12 @@ class SuperCluster:
 
 
 	def jsonify(self):
-		result= {"Date": self.dateUpdated, "classClusters": []}
+		result= {"Date": date.today().strftime("%B %d, %Y"), "classClusters": []}
 
 		for cc in self.myClassClusters:
-			result["classClusters"].append(cc.jsonify)
+			result["classClusters"].append(cc.jsonify())
 
-		return json.dumps(result, indent=2)
+		return json.dumps(result, indent=4)
 
 
 	def chartifyData(self, theDateUpdated=""):
@@ -225,11 +232,12 @@ class SuperCluster:
 
 
 
-def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=CLUSTER_NUMBERS):
+def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=[3,3,3,3,3,3,3,3,3,3]):
 	from sklearn import manifold
 	from sklearn.cluster import KMeans
 	from sklearn.preprocessing import StandardScaler
 
+	
 
 	superCluster = scFact()
 	superCluster._factory= scFact
@@ -238,6 +246,7 @@ def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=CLUSTER_NUMBE
 	data = deepcopy(inData)
 	clusterCountMover = 0;
 	classClusters = []
+	CLUSTER_NUMBERS = clusterNumbers
 
 	for hero, dataPoints in zip(CLASSES, data):
 		logger.info("Start Clustering for: {}".format(hero))
@@ -305,8 +314,8 @@ def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=CLUSTER_NUMBE
 		clusters = []
 		for id, dataPointIter in dpsInCluster.items():
 			clusters.append(Cluster.create(superCluster.CLUSTER_FACTORY, superCluster, id, dataPointIter))
-		print(len(clusters))
-		print(type(clusters))
+		#print(len(clusters))
+		#print(type(clusters))
 		classCluster = ClassCluster.create(superCluster.CLASS_FACTORY, superCluster, int(CardClass[hero]), clusters)
 		classClusters.append(classCluster)
 		clusterCountMover +=1
