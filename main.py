@@ -84,8 +84,8 @@ if __name__== "__main__":
 
 
 		# Get File name
-	#	if event == "-FILE-":
-	#		filename= values["-FILE-"]
+		if event == "-FILE-":
+			filename= values["-FILE-"]
 
 		#parse Cluster Counts
 		cluster_counts = []

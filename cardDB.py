@@ -4,7 +4,7 @@ from hearthstone.enums import CardClass
 
 _CARD_DATA_CACHE = {}
 
-
+#pip install hearthstone_data
 def card_db():
 	if "db" not in _CARD_DATA_CACHE:
 		db, _ = load_dbf()

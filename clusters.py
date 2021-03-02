@@ -3,12 +3,12 @@ from hearthstone.enums import CardClass
 from copy import deepcopy #we want new values not reference values on copy
 from datetime import date
 import matplotlib.pyplot as plt
-
+import csv
 from deckVector import *
 from deckWrapper import *
 from cardDB import *
 from getClusterCounts import *
-
+import pandas as pd
 
 global CLUSTER_NUMBERS
 CLASSES=["DEMONHUNTER", 'DRUID', 'HUNTER', 'MAGE', 'PALADIN', 'PRIEST', 'ROGUE', 'SHAMAN', 'WARLOCK', 'WARRIOR']
@@ -231,7 +231,6 @@ class SuperCluster:
 		return result
 
 
-
 def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=[3,3,3,3,3,3,3,3,3,3]):
 	from sklearn import manifold
 	from sklearn.cluster import KMeans
@@ -303,9 +302,17 @@ def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=[3,3,3,3,3,3,
 		X = StandardScaler().fit_transform(X)
 		myClusterMaker = KMeans(n_clusters=min(CLUSTER_NUMBERS[clusterCountMover], len(X)))
 
-		
 
 		myClusterMaker.fit(X)
+
+		labels = myClusterMaker.predict(X)
+		
+
+		df = pd.DataFrame(X)
+		df["cluster"]= labels
+		df = df.sort_values("cluster")
+		df.to_csv("outputs/labels/{}_labels.csv".format(hero), mode="w+", encoding='utf-8', index=False)
+
 
 		dpsInCluster = defaultdict(list)
 		for dp, cID in zip(dataPoints, myClusterMaker.labels_):
@@ -319,6 +326,8 @@ def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=[3,3,3,3,3,3,
 		classCluster = ClassCluster.create(superCluster.CLASS_FACTORY, superCluster, int(CardClass[hero]), clusters)
 		classClusters.append(classCluster)
 		clusterCountMover +=1
+
+
 		logger.info("END Clustering for: {}\n\n".format(hero))
 	superCluster.myClassClusters = classClusters
 
