@@ -1,6 +1,7 @@
 import numpy as np
 from deckWrapper import DeckWrapper
-
+import threading
+import sys
 from backports import csv
 import io
 import os
@@ -55,6 +56,9 @@ def deserialize(input):
 # Warlock = 8
 # Warrior = 9
 
+
+
+
 def parse_csv(filename, deckDict, classLists):
 
 	deckDict = {}
@@ -98,7 +102,7 @@ def parse_csv(filename, deckDict, classLists):
 		linecount += 1
 		if name not in deckDict:
 			deckDict[name] = []
-
+		#populate actual dictionary
 		for index, a in enumerate(schema):
 			if a!='D' or index >= len(row):
 				continue
@@ -152,6 +156,8 @@ def parse_csv(filename, deckDict, classLists):
 				else:
 					print("Critical Error with deck parsing")
 					exit(0)
+
+
 
 
 	classLists = np.array([dhA, dA, hA, mA, paA, prA, rA, sA, wlA, wrA], dtype=object)
