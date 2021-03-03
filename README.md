@@ -4,7 +4,7 @@ A python script for converting Hearthstone deck codes from a csv to declarations
 
 ## Requirements    
 Language that must be installed    
-* Python 3.8+   
+* Python 3.7+   
 
 Packages that can must be installed   
 This can be done by following instructions in **Setup**          

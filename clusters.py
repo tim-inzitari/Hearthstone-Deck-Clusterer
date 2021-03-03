@@ -231,13 +231,15 @@ class SuperCluster:
 
 		return result
 
-
-def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=[3,3,3,3,3,3,3,3,3,3]):
+from updateWindow import *
+def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=[3,3,3,3,3,3,3,3,3,3], window=None):
 	from sklearn import manifold
 	from sklearn.cluster import KMeans
 	from sklearn.preprocessing import StandardScaler
 
-	
+	windowUpdate = True
+	if window == None:
+		windowUpdate=False
 
 	superCluster = scFact()
 	superCluster._factory= scFact
@@ -251,7 +253,11 @@ def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=[3,3,3,3,3,3,
 	for hero, dataPoints in zip(CLASSES, data):
 		logger.info("Start Clustering for: {}".format(hero))
 		X = []
-
+		if windowUpdate:
+			updateTextWindow(window, "Clustering {} Decks".format(hero))
+			#fix weird bug where DH is only class not displaying
+			if hero == "DEMONHUNTER":
+				updateTextWindow(window, "Clustering DH Decks".format(hero))
 		reducedSetVector = getReducedSetVector(hero=hero)
 		logger.info("Base Cluster Length: %s" % len(reducedSetVector))
 		for dp in dataPoints:
@@ -305,7 +311,11 @@ def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=[3,3,3,3,3,3,
 
 
 		myClusterMaker.fit(X)
-
+		if windowUpdate:
+			updateTextWindow(window, "Labeling {} decks".format(hero))
+			#fix weird bug where DH is only class not displaying
+			if hero == "DEMONHUNTER":
+				updateTextWindow(window, "Labeling DH Decks".format(hero))
 		labels = myClusterMaker.predict(X)
 		
 		if not os.path.exists("outputs/labels/NEW_labels"):

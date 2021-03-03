@@ -5,7 +5,7 @@ import sys
 from backports import csv
 import io
 import os
-
+from updateWindow import *
 
 
 def find_code(text):
@@ -59,8 +59,11 @@ def deserialize(input):
 
 
 
-def parse_csv(filename, deckDict, classLists):
+def parse_csv(filename, deckDict, classLists, window=None):
 
+	windowUpdate= True
+	if window is None:
+		windowUpdate=False
 	deckDict = {}
 
 	classLists = np.empty(10, dtype=object)
@@ -77,6 +80,8 @@ def parse_csv(filename, deckDict, classLists):
 	deckstring = ""
 
 	dhA,dA,hA,mA,paA,prA,rA,sA,wlA,wrA = [],[],[],[],[],[],[],[],[],[]
+
+	
 
 
 	for index, x in enumerate(schemaLine):
@@ -98,6 +103,8 @@ def parse_csv(filename, deckDict, classLists):
 
 	#parse every line after schemaline
 	for row in deckreader[start:]:
+		if windowUpdate:
+			updateTextWindow(window, "{} Teams parsed".format(linecount))
 		name = row[key]
 		linecount += 1
 		if name not in deckDict:

@@ -13,11 +13,13 @@ from tkinter import *
 import json
 import random
 from copy import deepcopy #we want new values not reference 
-
+import time
+import threading
 
 CLASSES=["DEMONHUNTER", 'DRUID', 'HUNTER', 'MAGE', 'PALADIN', 'PRIEST', 'ROGUE', 'SHAMAN', 'WARLOCK', 'WARRIOR']
 
-
+def updateTextWindow(window, id, text):
+	window[id].update(text)
 
 def getNRandomItems(myList, n):
 	return random.sample(myList, n)
@@ -100,6 +102,9 @@ if __name__== "__main__":
 
 	window.close()
 
+	layout = [[sg.Text("Parsing CSV",key="-MOTION-")],
+				[sg.Text("Loading From File", key="-UPDATE-")]]
+	window = sg.Window("Deck Cluster Tool", layout, finalize=True)
 
 	# DEBUG ONLY
 	#filename = "CSVs/MTQ_IF_1to24.csv"
@@ -110,12 +115,13 @@ if __name__== "__main__":
 	deckDict = {}
 	classLists = []
 	linecount = 0
-	deckDict, classLists, linecount = csvManip.parse_csv(filename, deckDict, classLists)
+	deckDict, classLists, linecount = csvManip.parse_csv(filename, deckDict, classLists, window)
 
 	deckCount = 0
 	for i in classLists:
 		deckCount+= len(i)
 
+	window.close()
 
 	#make next window
 	layout=[ [sg.Text("Stage 2 Deck Parsing Complete!!")],
@@ -141,17 +147,24 @@ if __name__== "__main__":
 		
 	window.close()
 
+	layout = [[sg.Text("Clustering Decks: This will take some time",key="-MOTION-")],
+				[sg.Text("Setting Up for Clustering", key="-UPDATE-")]]
+	window = sg.Window("Deck Cluster Tool", layout)
+	window.read(timeout=0.00001)
 
 
 #Start Clustering Phase
 
 	
-	superCluster = createSuperCluster(classLists, clusterNumbers=cluster_counts)
+	superCluster = createSuperCluster(classLists, clusterNumbers=cluster_counts, window=window)
+
+
+	window.close()
 
 	#Get Layout
 	layout=[ [sg.Text("Stage 3 Deck Clustering Complete!!")],
 			 [sg.Text("")],
-			 [sg.Text("Press Next to Start Naming Clusters")],
+			 [sg.Text("Press Next to Start Stage 4: Classifictaion")],
 			 [sg.Button('Next', bind_return_key=True), sg.Button('Cancel')]]
 
 	window = sg.Window("Deck Cluster Tool", layout)
@@ -165,7 +178,10 @@ if __name__== "__main__":
 			break
 	window.close()
 
-
+	layout = [[sg.Text("Stage 4 Classification:",key="-MOTION-")],
+			[sg.Text("Generating Images: May take some Time", key="-UPDATE-")]]
+	window = sg.Window("Deck Cluster Tool", layout)
+	window.read(timeout=0.0001)
 
 	L=[]
 	#Generate frames to view sample decks
@@ -195,7 +211,7 @@ if __name__== "__main__":
 	#run decktoImagePNG so we have images to display
 	cmd = "python decktoImagePNG.py deckcsv outputs/tmp/tmp.csv outputs/tmp"
 	os.system(cmd)
-
+	window.close()
 	for class_ in CLASSES:
 		#define layout to display
 
@@ -219,14 +235,15 @@ if __name__== "__main__":
 			
 			while True:
 				event, values = window.read()
-
 				if event == sg.WIN_CLOSED or event == 'Cancel': 
-					# if user closes window or clicks cancel
+				# if user closes window or clicks cancel
 					window.close()
 					break
-				#Classify the category and continue
 				if event == "Next":
-					cluster.name = values["-INPUT-"]
+					if values["-INPUT-"] == "":
+						cluster.name = "other"
+					else:
+						cluster.name = values["-INPUT-"]
 					break
 			window.close()
 			#print(cluster)
@@ -258,6 +275,11 @@ if __name__== "__main__":
 			break
 	window.close()
 
+	layout = [[sg.Text("Outputting Results",key="-MOTION-")],
+			[sg.Text("Outputting Results: May take some Time", key="-UPDATE-")]]
+	window = sg.Window("Deck Cluster Tool", layout)
+	window.read(timeout=0.01)
+
 	#CSV Write of Archetypes
 	outputList = []
 	outputDeckDict = {}
@@ -271,6 +293,8 @@ if __name__== "__main__":
 					outputDeckDict[deck.teamName] = []
 				outputDeckDict[deck.teamName].append(deepcopy(deck))
 
+	window["-UPDATE-"].update("Outputting Results")
+	window.read(timeout=0.01)
 
 	for name in outputDeckDict:
 		subList = []
@@ -286,10 +310,13 @@ if __name__== "__main__":
 
 	#Make Json of SuperCluster
 
-	
-	with open('outputs/saved_superClusters/{}_cluster.json'.format(os.path.splitext(os.path.basename(filename))[0]), 'w+') as outfile:
-		json.dump(superCluster.jsonify(), outfile)
+	#window["-UPDATE-"].update("Outputting JSON")
+	#window.Refresh()
+	#with open('outputs/saved_superClusters/{}_cluster.json'.format(os.path.splitext(os.path.basename(filename))[0]), 'w+') as outfile:
+	#	json.dump(superCluster.jsonify(), outfile)
 
+	window["-UPDATE-"].update("Outputting Labels")
+	window.read(timeout=0.01)
 	#update Labels to new names
 	for class_ in CLASSES:
 		df = pd.read_csv("outputs/labels/NEW_labels/{}_labels.csv".format(class_))
@@ -303,5 +330,19 @@ if __name__== "__main__":
 
 		df = df.sort_values("cluster")
 		df.to_csv("outputs/labels/NEW_labels/{}_labels.csv".format(class_), mode="w+", encoding='utf-8', index=False)
+
+	window.close()
 	
+
+	layout=[ [sg.Text("Program Complete")],
+		[sg.Text("")],
+		[sg.Text("Press Finish")],
+		[sg.Button('Finish', bind_return_key=True)]]
+	window = sg.Window("Deck Cluster Tool", layout)
+	while True:
+		event, values = window.read()
+		if event == sg.WIN_CLOSED or event == 'Finish': 
+		# if user closes window or clicks cancel
+			window.close()
+			break
 #end main
