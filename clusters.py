@@ -9,6 +9,7 @@ from deckWrapper import *
 from cardDB import *
 from getClusterCounts import *
 import pandas as pd
+import os
 
 global CLUSTER_NUMBERS
 CLASSES=["DEMONHUNTER", 'DRUID', 'HUNTER', 'MAGE', 'PALADIN', 'PRIEST', 'ROGUE', 'SHAMAN', 'WARLOCK', 'WARRIOR']
@@ -307,7 +308,8 @@ def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=[3,3,3,3,3,3,
 
 		labels = myClusterMaker.predict(X)
 		
-		os.mkdir("outputs/labels/NEW_labels")
+		if not os.path.exists("outputs/labels/NEW_labels"):
+			os.mkdir("outputs/labels/NEW_labels")
 		df = pd.DataFrame(X)
 		df["cluster"]= labels
 		df = df.sort_values("cluster")

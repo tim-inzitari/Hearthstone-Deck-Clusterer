@@ -292,7 +292,7 @@ if __name__== "__main__":
 
 	#update Labels to new names
 	for class_ in CLASSES:
-		df = pd.read_csv("outputs/labels/{}_labels.csv".format(class_))
+		df = pd.read_csv("outputs/labels/NEW_labels/{}_labels.csv".format(class_))
 		aCC = superCluster.getClassClusterByName(class_)
 		classifies = []
 		for cluster in aCC.clusters:
@@ -302,6 +302,6 @@ if __name__== "__main__":
 		df['cluster']= classifies
 
 		df = df.sort_values("cluster")
-		df.to_csv("outputs/labels/{}_labels.csv".format(class_), mode="w+", encoding='utf-8', index=False)
+		df.to_csv("outputs/labels/NEW_labels/{}_labels.csv".format(class_), mode="w+", encoding='utf-8', index=False)
 	
 #end main
