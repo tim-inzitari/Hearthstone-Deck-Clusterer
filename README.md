@@ -59,7 +59,7 @@ python getCSVsThreaded STARTDATE ENDDATE
 
 ## CSV formatting
 
-# Input   
+### Input   
 The first line in the CSV file will be the schema for the rest of the file. It will be a comma separated list of arguments with the same length as the rest of the rows of the file. Leave unused fields blank, and use "K" for keys (which will group the decklists and control what the image file is named as), and "D" for deck codes to be parsed by the script.
 
 For example, a schema of `K,D,D,D,D` in the first line of the csv will indicate that the followings lines have the form "Name/Key, Deck Code #1, Deck Code #2, Deck Code #3, Deck Code #4", which a schema of "K,,D" will indicate the form of "Name/Key, \[Irrelevant\], Deck Code" and the program will group deck codes corresponding to the same key to the same deck image.
@@ -73,7 +73,8 @@ Akron,AAECAf0GBO0Fws4Cl9MCzfQCDYoB8gX7BrYH4Qf7B40I58sC8dAC/dACiNIC2OUC6uYCAA==,A
 ```     
 also accepts full deck codes.   
 
-# Output   
+### Output    
+For all modes     
 Outport will be of form:
 `K,D,D,D,D,...`   
 followed by the team name and deck calssification one each line    
@@ -82,4 +83,6 @@ Example output:
 ```
 K,D,D,D,D`   
 Akron, Highlander mage, OTK dh, Enrage warrior, Zoo warlock   
-```
+```   
+Clustering Portion also outputs a csv of Labels that can be used for later classification usages into
+`outputs/labels/`   
