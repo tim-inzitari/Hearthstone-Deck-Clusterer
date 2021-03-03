@@ -303,4 +303,5 @@ if __name__== "__main__":
 
 		df = df.sort_values("cluster")
 		df.to_csv("outputs/labels/{}_labels.csv".format(class_), mode="w+", encoding='utf-8', index=False)
+	
 #end main
