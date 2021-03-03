@@ -60,10 +60,9 @@ def deserialize(input):
 
 
 def parse_csv(filename, deckDict, classLists, window=None):
-
-	windowUpdate= True
-	if window is None:
-		windowUpdate=False
+	windowUpdate=False
+	if window is not None:
+		windowUpdate = True
 	deckDict = {}
 
 	classLists = np.empty(10, dtype=object)

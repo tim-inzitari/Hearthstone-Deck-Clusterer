@@ -3,28 +3,104 @@ from sklearn.neighbors import KNeighborsClassifier
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
+import multiprocessing
+from multiprocessing.pool import Pool
+from hearthstone.enums import CardClass
+from deckVector import *
+import os
+from deckWrapper import *
+from cardDB import *
+import csvManip as csvManip
+from itertools import repeat
+from copy import deepcopy
 
-def testClassify(srcData, dataNeedingPrediction):
-	data_train = pd.read_csv(srcData)
 
-	data_train.head()
-	data_features = data_train.copy()
-	data_labels = data_features.pop('cluster')
+
+def parseDeckInput(srcFile, deckDict, classLists, window=None):
+	linecount = 0
+	deckDict, classLists, linecount = csvManip.parse_csv(srcFile, deckDict, classLists, window)
+	return deckDict, classLists, linecount
+
+def testClassify(srcData, dataPoints, hero):
+	if dataPoints == []:
+		return []
+	srcTrain = pd.read_csv(srcData)
+	X=[]
+	srcTrain.head()
+	src_features = srcTrain.copy()
+	srcs_labels = src_features.pop('cluster')
 
 	from sklearn import preprocessing
 
 	le = preprocessing.LabelEncoder()
 
-	label = data_labels
+	label = srcs_labels
 
 
-	X_train, X_test, y_train, y_test = train_test_split(data_features, label, test_size=0.2)
+	X_train, X_test, y_train, y_test = train_test_split(src_features, label, test_size=0.2)
 
 	knn = KNeighborsClassifier(n_neighbors=3)
 
 	knn.fit(X_train, y_train)
 	y_pred = knn.predict(X_test)
 	from sklearn import metrics
-	print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
+	#print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
+
+
+
+	
+	
+	
+	#do the classification0
+	
+
+	Y=[]
+		#if no decks do nothing
+	
+		#Generate Vectors to Use
+	reducedSetVector = getReducedSetVector(hero=hero)
+	for dp in dataPoints:
+
+			#add all vectors for comparisons
+		cards = dp.deck.cards
+		cardDict = defaultdict(int)
+		for (i,j) in cards:
+			cardDict[i] = j
+		vector = [float(cardDict[i]) / 2.0 for dbId in reducedSetVector]
+
+		manaVector = (getManaCurveVector(dp))
+		vector.extend(manaVector)
+
+		vector.append(isHighlander(dp))
+
+		cardTypeVector = getCardTypeVector(dp)
+		vector.extend(cardTypeVector)
+
+		keyWordVector = getKeyWordVector(dp)
+		vector.extend(keyWordVector)
+
+		classNeutralVector = getClassNeutralVector(dp)
+		vector.extend(classNeutralVector)
+
+		cardSetVector = getCardSetVector(dp)
+		vector.extend(cardSetVector)
+
+		Y.append(vector)
+
+	Y_classified = []
+		#predict it
+	Y_classified = knn.predict(Y)
+
+		#reorganize results
+		
+	for dp, archetype in zip(dataPoints, Y_classified):
+		dp.classification = archetype
+
+	return dataPoints
+
+
+
+
+
 
 

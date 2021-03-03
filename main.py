@@ -15,6 +15,8 @@ import random
 from copy import deepcopy #we want new values not reference 
 import time
 import threading
+from deleteFiles import *
+from testClassify import *
 
 CLASSES=["DEMONHUNTER", 'DRUID', 'HUNTER', 'MAGE', 'PALADIN', 'PRIEST', 'ROGUE', 'SHAMAN', 'WARLOCK', 'WARRIOR']
 
@@ -47,12 +49,88 @@ def print_pretty_decks(player_class, clusters):
 	df = pd.DataFrame(L, columns=['K', 'D'])
 	df.to_csv("{}/{}/{}.csv".format(directName,i, uniqueID), encoding='utf-8', index=False, mode='w')
 
-# Main process
-if __name__== "__main__":
-	#add the layout start
+def toClassify():
+
+	labelData = ""
+	testData = ""
+
+	layout = [[sg.Text("Welcome To Deck Classifier!")],
+			[sg.Text("2 Items are required, labelDirect is folder of labels from a previous Clustering")],
+			[sg.Text("and deckCSV is input CSV to classify using those labels")],
+			[sg.Text("Input labelDirect"), sg.InputText(size=(50,1), enable_events=True, key="-FILE_LABEL-"), sg.FolderBrowse()],
+			[sg.Text("Input deckCSV"), sg.InputText(size=(50,1), enable_events=True, key="-FILE_DECK-"), sg.FileBrowse(file_types=(("CSVs","*.csv"),))],
+			[sg.Text("Output:"), sg.Text(size=(40,1), key='-OUTPUT-')],
+			[sg.Text("")],
+			[sg.Text("Next will Classify your decks, this may take some time")],
+			[sg.Button('Next', bind_return_key=True), sg.Button('Cancel')]]
+
+	window = sg.Window("Deck Classification Tool", layout)
+	myOutput = ""
+	while True:
+		event, values = window.read()
+		if event == sg.WIN_CLOSED or event == 'Cancel': 
+		# if user closes window or clicks cancel
+			window.close()
+			quit()
+		# if next is clicked go next
+		if event == "Next" and labelData != "" and testData != "":
+			break
+
+		# Get File name
+		if event == "-FILE_LABEL-":
+			labelData = values["-FILE_LABEL-"]
+
+		if event == "-FILE_DECK-":
+			testData = values["-FILE_DECK-"]
+	window.close()
+	#Run classification
+	layout = [[sg.Text("Classifyings: This will take some time",key="-MOTION-")],
+				[sg.Text("Setting Up for Clustering", key="-UPDATE-")]]
+	window = sg.Window("Deck Cluster Tool", layout)
+	window.read(timeout=0.00001)
+
+	deckDict = {}
+	classLists = []
+	deckDict, classLists, linecount = parseDeckInput(testData, deckDict, classLists)
+
+	for labelIn, classList, hero in zip(os.listdir(labelData),classLists, CLASSES):
+		window["-UPDATE-"].update("Classifying {} {} decks".format(len(classList), hero))
+		window.read(timeout=0.00001)
+		testClassify("{}/{}".format(labelData, labelIn), classList, hero)
+
+	window.close()
+	#regeneate default Dict for output
+	layout=[ [sg.Text("Classification Complete")],
+			[sg.Text("Exporting Data")]]
+	window = sg.Window("Deck Cluster Tool", layout)
+	window.read(timeout=0.0001)
+
+	outputDeckDict = {}
+	outputList = []
+
+	for dataPoints in classLists:
+		for dp in dataPoints:
+			if dp.teamName not in outputDeckDict:
+				outputDeckDict[dp.teamName] = []
+			outputDeckDict[dp.teamName].append(deepcopy(dp))
+
+	# list the output
+	for name in outputDeckDict:
+		subList = []
+		subList.append(name)
+		for deck in outputDeckDict[name]:
+			subList.append(deck.classification)
+		outputList.append(subList)
+
+	df = pd.DataFrame(outputList)
+	df.to_csv("outputs/outputCSV/{}_archetypes.csv".format(os.path.splitext(os.path.basename(testData))[0]), encoding='utf-8', index=False, mode='w+')
+
+	window.close()
+
+
+def toCluster():
 	cluster_counts = []
 	filename=""
-
 	#layout for first page
 	layout = [[sg.Text("Welcome To Deck Clusterer Tool!")],
 			[sg.Text("Enter integer Cluster Counts for Each Class in form")],
@@ -72,7 +150,7 @@ if __name__== "__main__":
 	#event loop to process "events" that get "values" of inputs
 	while True:
 		event, values = window.read()
-		if event == sg.WIN_CLOSED or event == 'Cancel': 
+		if (event == sg.WIN_CLOSED or event == 'Cancel') and filename != "": 
 		# if user closes window or clicks cancel
 			window.close()
 			quit()
@@ -254,7 +332,7 @@ if __name__== "__main__":
 			cluster.updateNames()
 
 	#remove images for storage space
-	from deleteFiles import *
+	
 	deleteFiles("outputs/tmp/", "png")
 
 	#End Stage 4
@@ -304,7 +382,7 @@ if __name__== "__main__":
 		outputList.append(subList)
 	
 	df_out = pd.DataFrame(outputList)
-	df_out.to_csv("outputs/outputCSV/{}_archetypes.csv".format(os.path.splitext(os.path.basename(filename))[0]), encoding='utf-8', index=False, mode='w')
+	df_out.to_csv("outputs/outputCSV/{}_archetypes.csv".format(os.path.splitext(os.path.basename(filename))[0]), encoding='utf-8', index=False, mode='w+')
 
 	
 
@@ -332,7 +410,50 @@ if __name__== "__main__":
 		df.to_csv("outputs/labels/NEW_labels/{}_labels.csv".format(class_), mode="w+", encoding='utf-8', index=False)
 
 	window.close()
+#end to CLUSTER
+
+
+
+
+
+# Main process
+if __name__== "__main__":
+	#add the layout start
 	
+	
+	#Do we Cluster or Do we Classify?
+	# True = Cluster, False = Classify
+	ClusterOrClassify = True
+	layout= [
+			[sg.Text("Welcome to Deck Clusterer")],
+			[sg.Text("Please Select an Option")],
+			[sg.Text("")],
+			[sg.Text("Classify Decks using previously clustered labels")], 
+			[sg.Button('Just Classify')],
+			[sg.Text("")],
+			[sg.Text("Cluster Data and then Classify Decks")], 
+			[sg.Button('Cluster and Classify')],
+			[sg.Text("")],
+			[sg.Button('Cancel')]
+			]
+	window = sg.Window("Deck Cluster Tool", layout)
+	while True:
+		event, values = window.read()
+		if event == sg.WIN_CLOSED: 
+		# if user closes window or clicks cancel
+			window.close()
+			break
+		if event == 'Just Classify':
+			ClusterOrClassify= False
+			break
+		if event == 'Cluster and Classify':
+			ClusterOrClassify=True
+			break
+	window.close()
+	if ClusterOrClassify:
+		toCluster()
+	else:
+		toClassify()
 
 	layout=[ [sg.Text("Program Complete")],
 		[sg.Text("")],
@@ -345,4 +466,5 @@ if __name__== "__main__":
 		# if user closes window or clicks cancel
 			window.close()
 			break
-#end main
+
+
