@@ -2,17 +2,20 @@ import requests, json
 import argparse
 import io
 import sys
+import argparse
 import os
 import csv
-import datetime
+import datetime as dt
+from datetime import datetime
+
 import multiprocessing
 from multiprocessing.pool import Pool
 from itertools import product
 
 
 NUM_PROCESSSES = 20
-START_DATE = "2021-02-20" #YYYY-MM-DD
-END_DATE = "2021-03-02"#YYYY-MM-DD
+global START_DATE #YYYY-MM-DD
+global END_DATE#YYYY-MM-DD
 
 def parseTournament(stage, tourny, count):
 	print("Start tourny {} id: {}".format(count+1, tourny))
@@ -87,4 +90,10 @@ def main():
 
 	print("Finish CSV File Write")
 if __name__ == '__main__':
-    main()
+	parser = argparse.ArgumentParser(description = "Get Start and End Date")
+	parser.add_argument("startDate", help="STARTDATE format: YYYY-MM-DD-hh-mm-ss Note, 24 hour time UCT Timezone")
+	parser.add_argument("endDate", help="ENDDATE format: MM-DD-YYYY-hh-mm-ss Note, 24 hour time UCT Timezone")
+	args = parser.parse_args()
+	START_DATE = args.startDate	
+	END_DATE = args.endDate	
+	main()
