@@ -85,4 +85,4 @@ K,D,D,D,D`
 Akron, Highlander mage, OTK dh, Enrage warrior, Zoo warlock   
 ```   
 Clustering Portion also outputs a csv of Labels that can be used for later classification usages into
-`outputs/labels/`   
+`outputs/labels/NEW_labels/` this should be renamed for easier use.   

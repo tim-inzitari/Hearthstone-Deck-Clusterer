@@ -307,11 +307,12 @@ def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=[3,3,3,3,3,3,
 
 		labels = myClusterMaker.predict(X)
 		
-
+		os.mkdir("outputs/labels/NEW_labels")
 		df = pd.DataFrame(X)
 		df["cluster"]= labels
 		df = df.sort_values("cluster")
-		df.to_csv("outputs/labels/{}_labels.csv".format(hero), mode="w+", encoding='utf-8', index=False)
+
+		df.to_csv("outputs/labels/NEW_labels/{}_labels.csv".format(hero), mode="w+", encoding='utf-8', index=False)
 
 
 		dpsInCluster = defaultdict(list)
@@ -321,7 +322,7 @@ def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=[3,3,3,3,3,3,
 		clusters = []
 		for id, dataPointIter in dpsInCluster.items():
 			clusters.append(Cluster.create(superCluster.CLUSTER_FACTORY, superCluster, id, dataPointIter))
-		#print(len(clusters))
+		#print(len(clusters)
 		#print(type(clusters))
 		classCluster = ClassCluster.create(superCluster.CLASS_FACTORY, superCluster, int(CardClass[hero]), clusters)
 		classClusters.append(classCluster)
