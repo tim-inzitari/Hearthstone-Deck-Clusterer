@@ -166,7 +166,7 @@ def toCluster():
 	window.close()
 
 	layout = [[sg.Text("Parsing CSV",key="-MOTION-")],
-				[sg.Text("Loading From File", key="-UPDATE-")]]
+				[sg.Text("Loading From File, This may take some time", key="-UPDATE-")]]
 	window = sg.Window("Deck Cluster Tool", layout, finalize=True)
 
 	# DEBUG ONLY
@@ -423,7 +423,9 @@ def toCluster():
 if __name__== "__main__":
 	#add the layout start
 	
-	
+
+	#TensorFlow Variable that needs to be done
+	#os.environ['TF_XLA_FLAGS'] = '--tf_xla_enable_xla_devices'
 	#Do we Cluster or Do we Classify?
 	# True = Cluster, False = Classify
 	ClusterOrClassify = True

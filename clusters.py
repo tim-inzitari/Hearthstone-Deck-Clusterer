@@ -10,10 +10,12 @@ from cardDB import *
 from getClusterCounts import *
 import pandas as pd
 import os
+from tfKMeans import *
 
 global CLUSTER_NUMBERS
 CLASSES=["DEMONHUNTER", 'DRUID', 'HUNTER', 'MAGE', 'PALADIN', 'PRIEST', 'ROGUE', 'SHAMAN', 'WARLOCK', 'WARRIOR']
 db = card_db()
+
 
 
 
@@ -258,8 +260,14 @@ def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=[3,3,3,3,3,3,
 			#fix weird bug where DH is only class not displaying
 			if hero == "DEMONHUNTER":
 				updateTextWindow(window, "Clustering DH Decks".format(hero))
+
+
+		#Generate Vectors used in Classifications
+
 		reducedSetVector = getReducedSetVector(hero=hero)
 		logger.info("Base Cluster Length: %s" % len(reducedSetVector))
+
+
 		for dp in dataPoints:
 
 			#add all vectors for comparisons
@@ -286,7 +294,9 @@ def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=[3,3,3,3,3,3,
 			cardSetVector = getCardSetVector(dp)
 			vector.extend(cardSetVector)
 
+			vector = np.array(vector)
 			X.append(vector)
+		X = np.array(X, np.float)
 
 		logger.info("Full Feature Vector Length: %s" % len(X[0]))
 		#do machine learning
@@ -307,16 +317,20 @@ def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=[3,3,3,3,3,3,
 
 
 		X = StandardScaler().fit_transform(X)
-		myClusterMaker = KMeans(n_clusters=min(CLUSTER_NUMBERS[clusterCountMover], len(X)))
+		print(X.shape)
+		labels = KmeansTF(X, CLUSTER_NUMBERS[clusterCountMover])
+		print("\n\n\n\n\n\n")
+		
+		#myClusterMaker = KMeans(n_clusters=min(CLUSTER_NUMBERS[clusterCountMover], len(X)))
 
 
-		myClusterMaker.fit(X)
+		#myClusterMaker.fit(X)
 		if windowUpdate:
 			updateTextWindow(window, "Labeling {} decks".format(hero))
 			#fix weird bug where DH is only class not displaying
 			if hero == "DEMONHUNTER":
 				updateTextWindow(window, "Labeling DH Decks".format(hero))
-		labels = myClusterMaker.predict(X)
+		
 		
 		if not os.path.exists("outputs/labels/NEW_labels"):
 			os.mkdir("outputs/labels/NEW_labels")
@@ -328,7 +342,7 @@ def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=[3,3,3,3,3,3,
 
 
 		dpsInCluster = defaultdict(list)
-		for dp, cID in zip(dataPoints, myClusterMaker.labels_):
+		for dp, cID in zip(dataPoints, labels):#myClusterMaker.labels_):
 			dpsInCluster[int(cID)].append(dp)
 
 		clusters = []
@@ -347,4 +361,5 @@ def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=[3,3,3,3,3,3,
 
 
 	return superCluster
+
 

@@ -9,3 +9,4 @@ backports.csv >= 1.0.7
 Pillow >= 1.0.7
 requests >= 2.25.1
 beautifulsoup4 >= 4.9.1
+tensorflow >= 2.4.0
