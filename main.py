@@ -133,12 +133,7 @@ def toCluster():
 	filename=""
 	#layout for first page
 	layout = [[sg.Text("Welcome To Deck Clusterer Tool!")],
-			[sg.Text("Enter integer Cluster Counts for Each Class in form")],
-			[sg.Text("DH"), sg.InputText('1', size=(5,1),  enable_events=True), sg.Text("Druid"), sg.InputText('1', size=(5,1),  enable_events=True), sg.Text("Hunter"), sg.InputText('1', size=(5,1),  enable_events=True), sg.Text("Mage"), sg.InputText('1', size=(5,1),  enable_events=True), sg.Text("Paladin"), sg.InputText('1', size=(5,1),  enable_events=True)],
-			[sg.Text("Priest"), sg.InputText('1', size=(5,1),  enable_events=True), sg.Text("Rogue"), sg.InputText('1', size=(5,1),  enable_events=True), sg.Text("Shaman"), sg.InputText('1', size=(5,1),  enable_events=True), sg.Text("Warlock"), sg.InputText('1', size=(5,1),  enable_events=True), sg.Text("Warrior"), sg.InputText('1', size=(5,1),  enable_events=True)],
 			[sg.Text("Input CSV"), sg.InputText(size=(50,1), enable_events=True, key="-FILE-"), sg.FileBrowse(file_types=(("CSVs","*.csv"),))],
-			[sg.Text("Output:"), sg.Text(size=(40,1), key='-OUTPUT-')],
-			[sg.Text("")],
 			[sg.Text("Next will start parsing the CSV, this may take some time")],
 			[sg.Button('Next', bind_return_key=True), sg.Button('Cancel')]]
 
@@ -156,9 +151,7 @@ def toCluster():
 			quit()
 		# if next is clicked go next
 		if event == "Next":
-			cluster_counts = []
-			for i in range(0,10):
-				cluster_counts.append(int(values[i]))
+			
 			break
 
 
@@ -166,15 +159,7 @@ def toCluster():
 		# Get File name
 		if event == "-FILE-":
 			filename= values["-FILE-"]
-
-		#parse Cluster Counts
-		cluster_counts = []
-		myOutput = ""
-		for i in range(0,10):
-			myOutput += (" {}".format(values[i]))
-			
-		window['-OUTPUT-'].update(myOutput)
-	
+		
 
 
 
@@ -207,6 +192,12 @@ def toCluster():
 			 [sg.Text("DH: {}, Druid: {}, Hunter: {}, Mage: {}, Paladin: {}".format(len(classLists[0]), len(classLists[1]), len(classLists[2]), len(classLists[3]), len(classLists[4])))],
 			 [sg.Text("Priest: {}, Rogue: {}, Shaman: {}, Warlock: {}, Warrior: {}".format(len(classLists[5]), len(classLists[6]), len(classLists[7]), len(classLists[8]), len(classLists[9])))],
 			 [sg.Text("")],
+			[sg.Text("Enter integer Cluster Counts for Each Class in form")],
+			[sg.Text("DH"), sg.InputText('1', size=(5,1),  enable_events=True), sg.Text("Druid"), sg.InputText('1', size=(5,1),  enable_events=True), sg.Text("Hunter"), sg.InputText('1', size=(5,1),  enable_events=True), sg.Text("Mage"), sg.InputText('1', size=(5,1),  enable_events=True), sg.Text("Paladin"), sg.InputText('1', size=(5,1),  enable_events=True)],
+			[sg.Text("Priest"), sg.InputText('1', size=(5,1),  enable_events=True), sg.Text("Rogue"), sg.InputText('1', size=(5,1),  enable_events=True), sg.Text("Shaman"), sg.InputText('1', size=(5,1),  enable_events=True), sg.Text("Warlock"), sg.InputText('1', size=(5,1),  enable_events=True), sg.Text("Warrior"), sg.InputText('1', size=(5,1),  enable_events=True)],
+			 [sg.Text("")],
+			 [sg.Text("Output:"), sg.Text(size=(40,1), key='-OUTPUT-')],
+			[sg.Text("")],
 			 [sg.Text("Press Next to Start Clustering, This may take some time")],
 			 [sg.Button('Next', bind_return_key=True), sg.Button('Cancel')]
 			 												]
@@ -221,7 +212,19 @@ def toCluster():
 			break
 		# if next is clicked go next
 		if event == "Next":
+			cluster_counts = []
+			for i in range(0,10):
+				cluster_counts.append(int(values[i]))
 			break
+		cluster_counts = []
+		myOutput = ""
+		#parse Cluster Counts
+		
+		for i in range(0,10):
+			myOutput += (" {}".format(values[i]))
+			
+		window['-OUTPUT-'].update(myOutput)
+	
 		
 	window.close()
 
