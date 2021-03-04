@@ -439,9 +439,10 @@ if __name__== "__main__":
 	window = sg.Window("Deck Cluster Tool", layout)
 	while True:
 		event, values = window.read()
-		if event == sg.WIN_CLOSED: 
+		if event == sg.WIN_CLOSED or event == 'Cancel': 
 		# if user closes window or clicks cancel
 			window.close()
+			quit()
 			break
 		if event == 'Just Classify':
 			ClusterOrClassify= False
