@@ -33,15 +33,18 @@ def parseTournament(stage, tourny, count):
 
 	#print(matches)
 	data = requests.get("https://majestic.battlefy.com/tournaments/{}/matches/{}/deckstrings".format(tourny, matches[4]['_id'])).json()
-	#print(data['top'][1])
+	print(data['bottom'][1])
+	print("\n")
 	
 
 
 	myString= ""
 	for match in matches:
+		print(match['isBye'])
 		data=requests.get("https://majestic.battlefy.com/tournaments/{}/matches/{}/deckstrings".format(tourny, match['_id'])).json()
 		myString+="\n{},".format(tourny)+"{}_{}".format(count+1, match['top']['team']['name']).replace("\n", "").replace(",","") + ","+"{}".format(data['top'][0]).replace("\n", "").replace(",","")+","+ "{}".format(data['top'][1]).replace("\n", "").replace(",","")+","+"{}".format(data['top'][2]).replace("\n", "").replace(",","")
-		if match['isBye'] =="False":
+		if match['isBye'] == False:
+			print("Hello")
 			myString+="\n{},".format(tourny)+"{}_{}".format(count+1, match['bottom']['team']['name']).replace("\n", "").replace(",","") + ","+"{}".format(data['bottom'][0]).replace("\n", "").replace(",","")+","+ "{}".format(data['bottom'][1]).replace("\n", "").replace(",","")+","+"{}".format(data['bottom'][2]).replace("\n", "").replace(",","")
 
 	print("End Tourny {}".format(count+1))
