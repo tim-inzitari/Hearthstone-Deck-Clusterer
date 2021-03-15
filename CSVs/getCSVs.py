@@ -13,7 +13,7 @@ from multiprocessing.pool import Pool
 from itertools import product
 
 
-NUM_PROCESSSES = 20
+NUM_PROCESSSES = multiprocessing.cpu_count()
 global START_DATE #YYYY-MM-DD
 global END_DATE#YYYY-MM-DD
 
