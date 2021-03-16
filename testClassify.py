@@ -3,6 +3,7 @@ from sklearn.neighbors import KNeighborsClassifier
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 import multiprocessing
 from multiprocessing.pool import Pool
 from hearthstone.enums import CardClass
@@ -38,13 +39,12 @@ def testClassify(srcData, dataPoints, hero):
 
 
 	X_train, X_test, y_train, y_test = train_test_split(src_features, label, test_size=0.2)
+	knn = KNeighborsClassifier(n_neighbors=1)
 
-	knn = KNeighborsClassifier(n_neighbors=3)
-
-	knn.fit(X_train, y_train)
+	knn.fit(src_features, srcs_labels)
 	y_pred = knn.predict(X_test)
 	from sklearn import metrics
-	#print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
+	print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
 
 
 
@@ -71,7 +71,6 @@ def testClassify(srcData, dataPoints, hero):
 		manaVector = (getManaCurveVector(dp))
 		vector.extend(manaVector)
 
-		vector.append(isHighlander(dp))
 
 		cardTypeVector = getCardTypeVector(dp)
 		vector.extend(cardTypeVector)
@@ -85,9 +84,17 @@ def testClassify(srcData, dataPoints, hero):
 		cardSetVector = getCardSetVector(dp)
 		vector.extend(cardSetVector)
 
+		for i in range(0,100):
+			vector.append(np.array(isHighlander(dp)))
+
+		vector = np.array(vector)
+
 		Y.append(vector)
 
 	Y_classified = []
+
+	#Data into K-Means is scaled so we have to scale the data for the input here
+	Y = StandardScaler().fit_transform(Y)
 		#predict it
 	Y_classified = knn.predict(Y)
 

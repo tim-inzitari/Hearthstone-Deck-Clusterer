@@ -206,21 +206,23 @@ print("\t\tClassCluster Class Tests Passed")
 print("\t\tSuperCluster Class Tests Passed")
 
 print("\t\tSTART CLUSTER TEST")
-deckDict, classLists, linecount = csvManip.parse_csv("CSVs/MTQ_IF_1to24.csv", deckDict, classLists)
+deckDict, classLists, linecount = csvManip.parse_csv("CSVs/MTQ_IF_1to90.csv", deckDict, classLists)
 for c in classLists:
 	num = 0
 	for l in c:
 		assert(len(l.cardList)==30), "Error at class: {} entry {}, len{}  player: {}".format(c[0].ingameClass,num, len(l.cardList), l.teamName)
 		num+=1
 
-for i in range(2, 4):
-	logger.info("START SuperCluster {}".format(i))
-	superCluster = createSuperCluster(classLists, clusterNumbers=getClusterCounts([40,5,7,4,8,6,7,8,9,3]))
-	for class_ in CLASSES:
-		aCC = superCluster.getClassClusterByName(class_)
-		print_pretty_decks(class_, aCC.clusters)
-	logger.info("FINISH SuperCluster {}".format(i))
 
+superCluster = createSuperCluster(classLists, clusterNumbers=getClusterCounts([20,20,20,20,20,20,20,20,20,20]))
+for class_ in CLASSES:
+	aCC = superCluster.getClassClusterByName(class_)
+	print_pretty_decks(class_, aCC.clusters)
+
+results = superCluster.chartifyData()
+
+
+logger.info("FINISH SuperCluster")
 
 #print(superCluster.chartifyData)
 

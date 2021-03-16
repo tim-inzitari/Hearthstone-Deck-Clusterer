@@ -18,7 +18,10 @@ CARDCOUNT = 30
 # Check if the deck is Highlander (no duplicate cards)
 def isHighlander(myDeck):
 	# need compressed list you originally get
-	return len(myDeck.deck.get_dbf_id_list())==30
+	if len(myDeck.deck.get_dbf_id_list())==30:
+		return float(1)
+	else:
+		return float(0)
 
 
 #Generate a vector for the manacurve of cards 0mana to 10 mana using percents

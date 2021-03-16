@@ -9,6 +9,8 @@ from deckWrapper import *
 from cardDB import *
 from getClusterCounts import *
 import pandas as pd
+import matplotlib
+import matplotlib.pyplot as plt
 import os
 from tfKMeans import *
 
@@ -195,7 +197,7 @@ class SuperCluster:
 			if cc.inGameClass == myClass:
 				return cc
 		print("FAIL")
-		
+
 
 		# Function to convert to a dictionary for input usage
 	def convertToDict(self):
@@ -215,22 +217,36 @@ class SuperCluster:
 	def chartifyData(self, theDateUpdated=""):
 		result = []
 
-		for hero, clusters in self.items():
-			heroResult = {"inGameClass": CardClass(int(hero)).name, "data": [], "clustMap": {}, "clustNames": {}, "dateUpdated": theDateUpdated}
 
-			for clust in clusters:
-				heroResult["clustMap"][c.clusterID] =c.clusterID
+		for aCC in self.myClassClusters:
+			myXs = []
+			myYs = []
+			myLabels = []
+			clusters= {}
+			for cluster in aCC.clusters:
+				if cluster.clusterID not in clusters:
+					clusters[cluster.clusterID] = []
+				for dp in cluster.decks:
+					myXs.append(dp["x"])
+					myYs.append(dp["y"])
+					myLabels.append(dp.clusterID)
+					
+					clusters[cluster.clusterID].append(tuple((dp["x"], dp["y"])))
+			#print(clusters)
+			for c in clusters:
+				first = [t[0] for t in clusters[c]]
+				second = [t[1] for t in clusters[c]]
+				plt.scatter(first, second)
+
+			plt.title(CardClass(aCC.inGameClass).name)
+			plt.ylabel("y")
+			plt.xlabel("x")
+			plt.show()
+			result.append(tuple((myXs, myYs, myLabels)))
 
 
-				for datapoint in clust.decks:
-					archetypeName = datapoint.classification
-					clusterID = int(data_point.clusterID)
 
-					metadata = {"clusterName": archetypeName, "clusterID": clusterID, "deckList":datapoint.cardList}
-
-					heroResult["data"].append({"x": datapoint["x"], "y": datapoint["y"], "metadata": metadata})
-			result.append(heroResult)
-
+		
 		return result
 
 from updateWindow import *
@@ -280,7 +296,7 @@ def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=[3,3,3,3,3,3,
 			manaVector = (getManaCurveVector(dp))
 			vector.extend(manaVector)
 
-			vector.append(isHighlander(dp))
+			
 
 			cardTypeVector = getCardTypeVector(dp)
 			vector.extend(cardTypeVector)
@@ -294,9 +310,22 @@ def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=[3,3,3,3,3,3,
 			cardSetVector = getCardSetVector(dp)
 			vector.extend(cardSetVector)
 
+			for i in range(0,100):
+				vector.append(np.array(isHighlander(dp)))
+
 			vector = np.array(vector)
+
+			#We want highlander to be very important so it gets more than one spot
+			
+
 			X.append(vector)
-		X = np.array(X, np.float)
+			if hero == "MAGE":
+				#print(vector)
+				if len(vector) != 2018:
+					print(dp.teamName)
+				#print(len(vector))
+		#print(X)
+		X = np.array(X, dtype=float)
 
 		logger.info("Full Feature Vector Length: %s" % len(X[0]))
 		#do machine learning
@@ -317,9 +346,9 @@ def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=[3,3,3,3,3,3,
 
 
 		X = StandardScaler().fit_transform(X)
-		print(X.shape)
+		#print(X.shape)
 		labels = KmeansTF(X, CLUSTER_NUMBERS[clusterCountMover])
-		print("\n\n\n\n\n\n")
+		print("")
 		
 		#myClusterMaker = KMeans(n_clusters=min(CLUSTER_NUMBERS[clusterCountMover], len(X)))
 

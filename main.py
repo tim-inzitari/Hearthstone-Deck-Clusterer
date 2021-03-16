@@ -96,7 +96,7 @@ def toClassify():
 	for labelIn, classList, hero in zip(os.listdir(labelData),classLists, CLASSES):
 		window["-UPDATE-"].update("Classifying {} {} decks".format(len(classList), hero))
 		window.read(timeout=0.00001)
-		testClassify("{}/{}".format(labelData, labelIn), classList, hero)
+		classList = testClassify("{}/{}".format(labelData, labelIn), classList, hero)
 
 	window.close()
 	#regeneate default Dict for output
@@ -179,7 +179,10 @@ def toCluster():
 	classLists = []
 	linecount = 0
 	deckDict, classLists, linecount = csvManip.parse_csv(filename, deckDict, classLists, window)
-
+	#for name in deckDict:
+		#if len(deckDict[name]) != 3 or len(deckDict[name]) != 4:
+			#print(name)
+			#print(deckDict[name])
 	deckCount = 0
 	for i in classLists:
 		deckCount+= len(i)
@@ -203,7 +206,6 @@ def toCluster():
 			 												]
 
 	window = sg.Window("Deck Cluster Tool", layout)
-
 	while True:
 		event, values = window.read()
 		if event == sg.WIN_CLOSED or event == 'Cancel': 

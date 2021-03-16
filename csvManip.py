@@ -99,7 +99,7 @@ def parse_csv(filename, deckDict, classLists, window=None):
 		for i in range(len(schemaLine)-1):
 			schema.append('D')
 		start-=1
-
+	badLists = []
 	#parse every line after schemaline
 	for row in deckreader[start:]:
 		if windowUpdate:
@@ -110,6 +110,7 @@ def parse_csv(filename, deckDict, classLists, window=None):
 			deckDict[name] = []
 		#populate actual dictionary
 		for index, a in enumerate(schema):
+
 			if a!='D' or index >= len(row):
 				continue
 			decklist = find_code(row[index])
@@ -120,51 +121,60 @@ def parse_csv(filename, deckDict, classLists, window=None):
 					if nAdded == 1:
 						deck = DeckWrapper(name,uniqueIDCounter, (deckstring+'='*i))
 						added = 0
-						break
 				except Exception as e:
 					continue
-			deckDict[name].append(deck)
-			uniqueIDCounter+=1
-			if deck!=None:
+
+			#Battlefy can accept 29 card lists in some scenarios
+			if len(deck.cardList) != 30:
+				print("Error on {}, not 30 card list: deleting entry".format(deck.teamName))
+				badLists.append(deck.teamName)
+				
+				continue
+			else:
 				deckDict[name].append(deck)
-				# add to class lists
-				# ran into weird bug where some decks were double adding so check if its not already in
-				if deck.ingameClass == 'demonhunter':
-					if deck not in dhA:
-						dhA.append(deck)
-				elif deck.ingameClass == 'druid':
-					if deck not in dA:
-						dA.append(deck)
-				elif deck.ingameClass == 'hunter':
-					if deck not in hA:
-						hA.append(deck)
-				elif deck.ingameClass == 'mage':
-					if deck not in mA:
-						mA.append(deck)
-				elif deck.ingameClass == 'paladin':
-					if deck not in paA:
-						paA.append(deck)
-				elif deck.ingameClass == 'priest':
-					if deck not in prA:
-						prA.append(deck)
-				elif deck.ingameClass == 'rogue':
-					if deck not in rA:
-						rA.append(deck)
-				elif deck.ingameClass == 'shaman':
-					if deck not in sA:
-						sA.append(deck)
-				elif deck.ingameClass == 'warlock':
-					if deck not in wlA:
-						wlA.append(deck)
-				elif deck.ingameClass == 'warrior':
-					if deck not in wrA:
-						wrA.append(deck)
-				else:
-					print("Critical Error with deck parsing")
-					exit(0)
+				uniqueIDCounter+=1
+				if deck!=None:
+					deckDict[name].append(deck)
+					# add to class lists
+					# ran into weird bug where some decks were double adding so check if its not already in
+					if deck.ingameClass == 'demonhunter':
+						if deck not in dhA:
+							dhA.append(deck)
+					elif deck.ingameClass == 'druid':
+						if deck not in dA:
+							dA.append(deck)
+					elif deck.ingameClass == 'hunter':
+						if deck not in hA:
+							hA.append(deck)
+					elif deck.ingameClass == 'mage':
+						if deck not in mA:
+							mA.append(deck)
+					elif deck.ingameClass == 'paladin':
+						if deck not in paA:
+							paA.append(deck)
+					elif deck.ingameClass == 'priest':
+						if deck not in prA:
+							prA.append(deck)
+					elif deck.ingameClass == 'rogue':
+						if deck not in rA:
+							rA.append(deck)
+					elif deck.ingameClass == 'shaman':
+						if deck not in sA:
+							sA.append(deck)
+					elif deck.ingameClass == 'warlock':
+						if deck not in wlA:
+							wlA.append(deck)
+					elif deck.ingameClass == 'warrior':
+						if deck not in wrA:
+							wrA.append(deck)
+					else:
+						print("Critical Error with deck parsing")
+						exit(0)
 
 
 
 
+	for j in badLists:
+		del deckDict[j]
 	classLists = np.array([dhA, dA, hA, mA, paA, prA, rA, sA, wlA, wrA], dtype=object)
 	return deckDict, classLists, linecount

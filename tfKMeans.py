@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np
-
+import matplotlib.pyplot as plt
 
 
 #Define a function to get closest centroids for KMeans implementation
@@ -40,11 +40,11 @@ def KmeansTF(X, cluster_n):
 	zeroes = []
 	for i in range(0,vectorLength):
 		zeroes.append(0.0)
-	print(X)
+	#print(X)
 
 	#Start by selecting 3 random points
 	centroids = tf.slice(tf.random.shuffle(X), [0,0], [cluster_n, -1])
-	print(centroids.shape)
+	#print(centroids.shape)
 
 	#Define Variable to detect if movement happens
 	movementOccurred = True
@@ -63,13 +63,14 @@ def KmeansTF(X, cluster_n):
 			#	i = i
 		if np.array_equiv(centroids[:cluster_n], past_centroids[:cluster_n]):
 			movementOccurred = False
-			print("DONE")
+			#print("DONE")
 		stepCount+=1
 		del past_centroids
 		#exit after 10000 epochs no matter waht
 		if stepCount == 10000:
 			movementOccurred= False
 		#print("EPOCH: {}".format(stepCount))
-	print(centroids)
+	#print(centroids)
 	print("{} epochs".format(stepCount))
 	return(closest)
+
