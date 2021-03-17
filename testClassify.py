@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import confusion_matrix
 import multiprocessing
 from multiprocessing.pool import Pool
 from hearthstone.enums import CardClass
@@ -14,9 +15,14 @@ from cardDB import *
 import csvManip as csvManip
 from itertools import repeat
 from copy import deepcopy
+from sklearn import svm
+from sklearn.neural_network import MLPClassifier
 
-
-
+import matplotlib.pyplot as plt  
+from sklearn.metrics import plot_confusion_matrix
+import matplotlib
+import math
+matplotlib.interactive(True)
 def parseDeckInput(srcFile, deckDict, classLists, window=None):
 	linecount = 0
 	deckDict, classLists, linecount = csvManip.parse_csv(srcFile, deckDict, classLists, window)
@@ -35,16 +41,30 @@ def testClassify(srcData, dataPoints, hero):
 
 	le = preprocessing.LabelEncoder()
 
+	displayLabels = []
 	label = srcs_labels
+	for s in srcs_labels:
+		if s != hero:
+			displayLabels.append(s.split()[0])
+	srcs_labels = displayLabels
+	label = srcs_labels
+	input_size = src_features.shape[1]
+	#print("ADAM, {} 250 500".format(math.floor(input_size/2.0)))
+	#print("ADAM 64 48")
+	print("SVM")
+	X_train, X_test, y_train, y_test = train_test_split(src_features, label, test_size=0.2, random_state=0)
+	#model = KNeighborsClassifier(n_neighbors=5)
+	model = svm.SVC(random_state=0)
+	#model = MLPClassifier(random_state=0, max_iter=50000, hidden_layer_sizes=(64,48), early_stopping=True, solver='adam', warm_start=True)
 
 
-	X_train, X_test, y_train, y_test = train_test_split(src_features, label, test_size=0.2)
-	knn = KNeighborsClassifier(n_neighbors=1)
-
-	knn.fit(src_features, srcs_labels)
-	y_pred = knn.predict(X_test)
+	model.fit(src_features, srcs_labels)
+	y_pred = model.predict(X_test)
 	from sklearn import metrics
-	print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
+	print("{} Accuracy:".format(hero),metrics.accuracy_score(y_test, y_pred))
+	plot_confusion_matrix(model, X_test, y_test)
+	plt.title(hero)
+	plt.show()
 
 
 
@@ -96,7 +116,7 @@ def testClassify(srcData, dataPoints, hero):
 	#Data into K-Means is scaled so we have to scale the data for the input here
 	Y = StandardScaler().fit_transform(Y)
 		#predict it
-	Y_classified = knn.predict(Y)
+	Y_classified = model.predict(Y)
 
 		#reorganize results
 		

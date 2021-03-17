@@ -85,8 +85,8 @@ def toClassify():
 	window.close()
 	#Run classification
 	layout = [[sg.Text("Classifyings: This will take some time",key="-MOTION-")],
-				[sg.Text("Setting Up for Clustering", key="-UPDATE-")]]
-	window = sg.Window("Deck Cluster Tool", layout)
+				[sg.Text("Setting Up for Clustering", key="-UPDATE-", size=(100, 2))]]
+	window = sg.Window("Deck Cluster Tool", layout, size=(500,500))
 	window.read(timeout=0.00001)
 
 	deckDict = {}
@@ -312,9 +312,9 @@ def toCluster():
 							[sg.Text("Define this Deck: "), sg.InputText("".format(class_), key="-INPUT-")],
 					 		[sg.Button('Next', bind_return_key=True), sg.Button('Cancel')]]
 			layout = [ 
-						[sg.Column(textColumn), sg.VSeparator(), sg.Column(imageColumn, scrollable=True, size=(800,800))]
+						[sg.Column(textColumn), sg.VSeparator(), sg.Column(imageColumn, scrollable=True, size=(1000,850))]
 					 ]
-			window = sg.Window("Cluster Classification", layout, size=(1200,800))
+			window = sg.Window("Cluster Classification", layout, size = (1400,900))
 			
 			while True:
 				event, values = window.read()
