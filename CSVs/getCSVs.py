@@ -32,12 +32,12 @@ def parseTournament(stage, tourny, count):
 		matches.append(match)
 
 	#print(matches)
-	data = requests.get("https://majestic.battlefy.com/tournaments/{}/matches/{}/deckstrings".format(tourny, matches[4]['_id'])).json()
+	#data = requests.get("https://majestic.battlefy.com/tournaments/{}/matches/{}/deckstrings".format(tourny, matches[4]['_id'])).json()
 	#print(data['bottom'][1])
 	#print("\n")
 	
 
-
+	#parse r1
 	myString= ""
 	for match in matches:
 		data=requests.get("https://majestic.battlefy.com/tournaments/{}/matches/{}/deckstrings".format(tourny, match['_id'])).json()

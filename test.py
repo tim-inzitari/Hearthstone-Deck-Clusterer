@@ -206,7 +206,7 @@ print("\t\tClassCluster Class Tests Passed")
 print("\t\tSuperCluster Class Tests Passed")
 
 print("\t\tSTART CLUSTER TEST")
-deckDict, classLists, linecount = csvManip.parse_csv("CSVs/MTQ_IF_1to90.csv", deckDict, classLists)
+deckDict, classLists, linecount = csvManip.parse_csv("CSVs/MTQ_IF_1to24.csv", deckDict, classLists)
 for c in classLists:
 	num = 0
 	for l in c:
@@ -214,17 +214,15 @@ for c in classLists:
 		num+=1
 
 
-superCluster = createSuperCluster(classLists, clusterNumbers=getClusterCounts([20,20,20,20,20,20,20,20,20,20]))
+superCluster = createSuperCluster(classLists, clusterNumbers=getClusterCounts([2,2,2,2,2,2,2,2,2,2]))
 for class_ in CLASSES:
 	aCC = superCluster.getClassClusterByName(class_)
-	print_pretty_decks(class_, aCC.clusters)
+	#print_pretty_decks(class_, aCC.clusters)
 
-results = superCluster.chartifyData()
+#results = superCluster.chartifyData()
+# This import registers the 3D projection, but is otherwise unused.
 
 
-logger.info("FINISH SuperCluster")
-
-#print(superCluster.chartifyData)
 
 print("\tclusters.py Functions and Classes passing all tests")
 #END CLUSTERS

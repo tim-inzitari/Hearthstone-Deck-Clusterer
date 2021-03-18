@@ -119,7 +119,7 @@ def toClassify():
 		subList = []
 		subList.append(name)
 		for deck in outputDeckDict[name]:
-			subList.append(deck.classification)
+			subList.append("{} {}".format(deck.classification, deck.ingameClass))
 		outputList.append(subList)
 
 	df = pd.DataFrame(outputList)

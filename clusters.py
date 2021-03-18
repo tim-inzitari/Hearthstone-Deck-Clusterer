@@ -347,11 +347,12 @@ def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=[3,3,3,3,3,3,
 
 		X = StandardScaler().fit_transform(X)
 		#print(X.shape)
-		labels = KmeansTF(X, CLUSTER_NUMBERS[clusterCountMover])
+		#labels = KmeansTF(X, CLUSTER_NUMBERS[clusterCountMover])
 		print("")
 		
-		#myClusterMaker = KMeans(n_clusters=min(CLUSTER_NUMBERS[clusterCountMover], len(X)))
-
+		myClusterMaker = KMeans(n_clusters=min(CLUSTER_NUMBERS[clusterCountMover], len(X)))
+		myClusterMaker.fit(X)
+		labels = myClusterMaker.labels_
 
 		#myClusterMaker.fit(X)
 		if windowUpdate:

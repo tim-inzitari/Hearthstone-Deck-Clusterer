@@ -35,6 +35,7 @@ def testClassify(srcData, dataPoints, hero):
 	X=[]
 	srcTrain.head()
 	src_features = srcTrain.copy()
+
 	srcs_labels = src_features.pop('cluster')
 
 	from sklearn import preprocessing
@@ -53,12 +54,13 @@ def testClassify(srcData, dataPoints, hero):
 	#print("ADAM 64 48")
 	print("SVM")
 	X_train, X_test, y_train, y_test = train_test_split(src_features, label, test_size=0.2, random_state=0)
-	#model = KNeighborsClassifier(n_neighbors=5)
-	model = svm.SVC(random_state=0)
+	#model = KNeighborsClassifier(n_neighbors=11, p=1)
+	model = svm.SVC(random_state=0, C=1.0)
+	model.fit(src_features, srcs_labels)
+
 	#model = MLPClassifier(random_state=0, max_iter=50000, hidden_layer_sizes=(64,48), early_stopping=True, solver='adam', warm_start=True)
 
 
-	model.fit(src_features, srcs_labels)
 	y_pred = model.predict(X_test)
 	from sklearn import metrics
 	print("{} Accuracy:".format(hero),metrics.accuracy_score(y_test, y_pred))
@@ -111,6 +113,7 @@ def testClassify(srcData, dataPoints, hero):
 
 		Y.append(vector)
 
+	Y = np.array(Y, dtype=float)
 	Y_classified = []
 
 	#Data into K-Means is scaled so we have to scale the data for the input here
