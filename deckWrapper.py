@@ -34,6 +34,7 @@ class DeckWrapper:
 		self.deck = deckstrings.Deck().from_deckstring(self.deckCode)
 		self.cardList = []
 		
+		#For Graphing with TSNE
 		self.x = -1
 		self.y = -1
 
@@ -48,6 +49,4 @@ class DeckWrapper:
 	def __getitem__(self, key):
 		return getattr(self, key)
 
-	def jsonify(self):
-		json = {"uID": self.uID, "deckCode": self.deckCode, "classification": self.classification}
-		return json
+

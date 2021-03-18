@@ -50,16 +50,8 @@ logger.info("START NEW\n--------------------------------------------------------
 
 
 
-
-
-
-
-
-
-
-
 """
-A collection of Decks that have similar gameplans and similar cards
+cluster of decks
 
 """
 class Cluster:
@@ -91,11 +83,6 @@ class Cluster:
 			deck.clusterID = self.clusterID
 			deck.classification = self.name
 
-
-	#convert to json for an output
-	def jsonify(self):
-		json = {"clusterID": self.clusterID, "name": self.name, "decks": self.decks} 
-		return json
 
 
 	def __str__(self):
@@ -149,14 +136,6 @@ class ClassCluster:
 	def getInGameClass(self):
 		return CardClass(self.inGameClass).name
 
-	# Send to json for an output
-	def jsonify(self):
-		result = {"inGameClass": self.getInGameClass, "clusters": []}
-		for cluster in self.clusters:
-			result["clusters"].append(cluster.jsonify())
-
-		return result
-
 
 	# Function to convert to a dictionary for input usage
 	def convertToDict(self):
@@ -205,15 +184,8 @@ class SuperCluster:
 			yield(classCluster.inGameClass, classCluster.clusters)
 
 
-	def jsonify(self):
-		result= {"Date": date.today().strftime("%B %d, %Y"), "classClusters": []}
 
-		for cc in self.myClassClusters:
-			result["classClusters"].append(cc.jsonify())
-
-		return json.dumps(result, indent=4)
-
-
+	#for TSNE displays might delete later
 	def chartifyData(self, theDateUpdated=""):
 		result = []
 
@@ -328,22 +300,8 @@ def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=[3,3,3,3,3,3,
 		X = np.array(X, dtype=float)
 
 		logger.info("Full Feature Vector Length: %s" % len(X[0]))
-		#do machine learning
-		# Use TSNE to help visualize the high dimensonal data
-		if len(dataPoints) > 1:
-			tsne = manifold.TSNE(n_components=2, init='pca', random_state=0)
-			xy = tsne.fit_transform(deepcopy(X))
-			for (x,y), dp in zip(xy, dataPoints):
-				dp.x = float(x)
-				dp.y = float(y)
-		elif len(dataPoints) == 1:
-				#in case of only one deck just dump it at origin
-			dataPoints[0].x = 0.0
-			dataPoints[0].y = 0.0
-		else:
-				#Nothing here
-			continue
 
+		#Do Machine Learning
 
 		X = StandardScaler().fit_transform(X)
 		#print(X.shape)
