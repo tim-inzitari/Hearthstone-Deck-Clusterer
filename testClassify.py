@@ -64,9 +64,9 @@ def testClassify(srcData, dataPoints, hero):
 	y_pred = model.predict(X_test)
 	from sklearn import metrics
 	print("{} Accuracy:".format(hero),metrics.accuracy_score(y_test, y_pred))
-	plot_confusion_matrix(model, X_test, y_test)
-	plt.title(hero)
-	plt.show()
+	#plot_confusion_matrix(model, X_test, y_test)
+	#plt.title(hero)
+	#plt.show()
 
 
 
