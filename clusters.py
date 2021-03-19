@@ -185,41 +185,7 @@ class SuperCluster:
 
 
 
-	#for TSNE displays might delete later
-	def chartifyData(self, theDateUpdated=""):
-		result = []
-
-
-		for aCC in self.myClassClusters:
-			myXs = []
-			myYs = []
-			myLabels = []
-			clusters= {}
-			for cluster in aCC.clusters:
-				if cluster.clusterID not in clusters:
-					clusters[cluster.clusterID] = []
-				for dp in cluster.decks:
-					myXs.append(dp["x"])
-					myYs.append(dp["y"])
-					myLabels.append(dp.clusterID)
-					
-					clusters[cluster.clusterID].append(tuple((dp["x"], dp["y"])))
-			#print(clusters)
-			for c in clusters:
-				first = [t[0] for t in clusters[c]]
-				second = [t[1] for t in clusters[c]]
-				plt.scatter(first, second)
-
-			plt.title(CardClass(aCC.inGameClass).name)
-			plt.ylabel("y")
-			plt.xlabel("x")
-			plt.show()
-			result.append(tuple((myXs, myYs, myLabels)))
-
-
-
-		
-		return result
+	
 
 from updateWindow import *
 def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=[3,3,3,3,3,3,3,3,3,3], window=None):
@@ -263,7 +229,9 @@ def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=[3,3,3,3,3,3,
 			cardDict = defaultdict(int)
 			for (i,j) in cards:
 				cardDict[i] = j
-			vector = [float(cardDict[i]) / 2.0 for dbId in reducedSetVector]
+
+			#Check if card is present in deck
+			vector = [float(cardDict.get(dbId, 0)) / 30 for dbId in reducedSetVector]
 
 			manaVector = (getManaCurveVector(dp))
 			vector.extend(manaVector)
@@ -291,10 +259,10 @@ def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=[3,3,3,3,3,3,
 			
 
 			X.append(vector)
-			if hero == "MAGE":
+			#if hero == "MAGE":
 				#print(vector)
-				if len(vector) != 2018:
-					print(dp.teamName)
+				#if len(vector) != 2018:
+					#print(dp.teamName)
 				#print(len(vector))
 		#print(X)
 		X = np.array(X, dtype=float)

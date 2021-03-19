@@ -90,7 +90,7 @@ def getKeyWordVector(myDeck):
 			if card.tags.get(kw, 0) or card.referenced_tags.get(kw, 0):
 				count += 1
 
-			kwArray.append(count/CARDCOUNT)
+			kwArray.append(float(count/CARDCOUNT))
 
 	return kwArray
 

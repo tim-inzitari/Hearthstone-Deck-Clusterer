@@ -53,20 +53,20 @@ def testClassify(srcData, dataPoints, hero):
 	#print("ADAM, {} 250 500".format(math.floor(input_size/2.0)))
 	#print("ADAM 64 48")
 	print("SVM")
-	X_train, X_test, y_train, y_test = train_test_split(src_features, label, test_size=0.2, random_state=0)
-	#model = KNeighborsClassifier(n_neighbors=11, p=1)
-	model = svm.SVC(random_state=0, C=1.0)
-	model.fit(src_features, srcs_labels)
+	X_train, X_test, y_train, y_test = train_test_split(src_features, label, test_size=0.1, random_state=0)
+	#model = KNeighborsClassifier(n_neighbors=5, p=1)
+	#model = svm.SVC(random_state=0, C=1.0)
+	
 
-	#model = MLPClassifier(random_state=0, max_iter=50000, hidden_layer_sizes=(64,48), early_stopping=True, solver='adam', warm_start=True)
-
+	model = MLPClassifier(random_state=0, max_iter=50000, hidden_layer_sizes=(64,32,16), early_stopping=True, solver='adam', warm_start=True)
+	model.fit(X_train, y_train)
 
 	y_pred = model.predict(X_test)
 	from sklearn import metrics
 	print("{} Accuracy:".format(hero),metrics.accuracy_score(y_test, y_pred))
-	#plot_confusion_matrix(model, X_test, y_test)
-	#plt.title(hero)
-	#plt.show()
+	plot_confusion_matrix(model, X_test, y_test)
+	plt.title(hero)
+	plt.show()
 
 
 
@@ -88,7 +88,7 @@ def testClassify(srcData, dataPoints, hero):
 		cardDict = defaultdict(int)
 		for (i,j) in cards:
 			cardDict[i] = j
-		vector = [float(cardDict[i]) / 2.0 for dbId in reducedSetVector]
+		vector = [float(cardDict.get(dbId, 0)) / 30 for dbId in reducedSetVector]
 
 		manaVector = (getManaCurveVector(dp))
 		vector.extend(manaVector)
