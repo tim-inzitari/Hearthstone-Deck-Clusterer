@@ -8,6 +8,7 @@ import csvManip as csvManip
 import os
 from cardDB import *
 from clusters import *
+import csv
 import subprocess
 from tkinter import *
 import json
@@ -25,6 +26,7 @@ def updateTextWindow(window, id, text):
 
 def getNRandomItems(myList, n):
 	return random.sample(myList, n)
+
 
 def print_pretty_decks(player_class, clusters):
 	#print("Printing Clusters For: %s" % player_class)
@@ -89,6 +91,10 @@ def toClassify():
 	window = sg.Window("Deck Cluster Tool", layout, size=(500,500))
 	window.read(timeout=0.00001)
 
+
+	labelData="outputs/labels/use this"
+	testData="CSVs/tespa varsity.csv"
+
 	deckDict = {}
 	classLists = []
 	deckDict, classLists, linecount = parseDeckInput(testData, deckDict, classLists)
@@ -121,6 +127,30 @@ def toClassify():
 		for deck in outputDeckDict[name]:
 			subList.append("{} {}".format(deck.classification, deck.ingameClass))
 		outputList.append(subList)
+	Q = pd.read_csv("outputs/outputCSV/tespa_varsity1_archetypes_real.csv")
+
+	
+
+	QList = [list(row) for row in Q.values]
+	QDict= {}
+	w = 0
+	for row in QList:
+		name = row[0]
+
+		QDict[name] = [row[1], row[2], row[3], row[4]]
+
+	PDict = {}
+	for name in outputDeckDict:
+		PDict[name] = []
+		for x in outputDeckDict[name]:
+			PDict[name].append("{} {}".format(x.classification, x.ingameClass))
+
+	for q, t in zip(QDict, PDict):
+		print("{} wrong on {} : \n\t actual:  {} \t\t  output:{}\n".format(q, list(set(PDict[q])-set(QDict[q])),list(QDict[q]),list(PDict[q])))
+		w+= len( list(set(PDict[q])-set(QDict[q])))
+
+	print("{} of {}:".format(w, 36*4))
+	print(float(1-(w/(36*4))))
 
 	df = pd.DataFrame(outputList)
 	df.to_csv("outputs/outputCSV/{}_archetypes.csv".format(os.path.splitext(os.path.basename(testData))[0]), encoding='utf-8', index=False, mode='w+')
@@ -287,58 +317,65 @@ def toCluster():
 				L.append(("{} {}".format(class_,count), randomSelection[0].deckCode, randomSelection[1].deckCode, randomSelection[2].deckCode))
 			count += 1
 
-	#Convert that to a CSV File
 	df = pd.DataFrame(L, columns=['K','D','D','D'])
 	df.to_csv("outputs/tmp/tmp.csv", encoding = 'utf-8', index=False, mode='w')
+	
 
 	#run decktoImagePNG so we have images to display
 	cmd = "python decktoImagePNG.py deckcsv outputs/tmp/tmp.csv outputs/tmp"
 	os.system(cmd)
 	window.close()
+	#os.mkdir("outputs/tmp")
+	imageColumn = [ 
+						[sg.Image(key="-IMAGE-", filename="", size=(1400,3000))]
+		]
+	textColumn = [			[sg.Text("Stage 4 Declaring Names on ", key="-CLASS-",size =(50,1))],
+							[sg.Text("Next to Continue to Next Deck/Class/Stage")],
+							[sg.Text("Decks in Cluster:      !", key="-DECKS-", size =(30,1) )],
+							[sg.Text("Define this Deck: "), sg.InputText("", key="-INPUT-")],
+					 		[sg.Button('Next', bind_return_key=True), sg.Button('Cancel')]]
+	layout = [ 
+						[sg.Column(textColumn), sg.VSeparator(), sg.Column(imageColumn, scrollable=True, size=(1350,900))]
+					 ]
+	window = sg.Window("Cluster Classification", layout, size = (1400,900))
+	window.read(timeout=0.001)
 	for class_ in CLASSES:
 		#define layout to display
-
+		window['-CLASS-'].update("Stage 4 Declaring Names on {}".format(class_))
 
 		#acctually display
 		i=0
 		aCC = superCluster.getClassClusterByName(class_)
+		
 		for cluster in aCC.clusters:
-			imageColumn = [ 
-						[sg.Image(key="-IMAGE-", filename="outputs/tmp/{} {}.png".format(class_, i))]
-		]
-			textColumn = [	[sg.Text("Stage 4 Declaring Names on {}".format(class_))],
-							[sg.Text("Next to Continue to Next Deck/Class/Stage")],
-							[sg.Text("Decks in Cluster: {}".format(len(cluster.decks)))],
-							[sg.Text("Define this Deck: "), sg.InputText("".format(class_), key="-INPUT-")],
-					 		[sg.Button('Next', bind_return_key=True), sg.Button('Cancel')]]
-			layout = [ 
-						[sg.Column(textColumn), sg.VSeparator(), sg.Column(imageColumn, scrollable=True, size=(1000,850))]
-					 ]
-			window = sg.Window("Cluster Classification", layout, size = (1400,900))
-			
-			while True:
-				event, values = window.read()
-				if event == sg.WIN_CLOSED or event == 'Cancel': 
+			window['-DECKS-'].update("Decks in Cluster: {}".format(len(cluster.decks)))
+			window['-IMAGE-'].update(filename="outputs/tmp/{} {}.png".format(class_,i))
+			event, values = window.read()
+			if event == sg.WIN_CLOSED or event == 'Cancel': 
 				# if user closes window or clicks cancel
-					window.close()
-					break
-				if event == "Next":
-					if values["-INPUT-"] == "":
-						cluster.name = "other"
-					else:
-						cluster.name = values["-INPUT-"]
-					break
-			window.close()
+				window.close()
+				quit()
+				break
+			if event == "Next":
+				if values["-INPUT-"] == "":
+					cluster.name = "other"
+				else:
+					cluster.name = values["-INPUT-"]
+				window['-INPUT-'].update("")
+				
+			
 			#print(cluster)
 			i+=1
-			layout=[]
+			window.refresh()
 
 			#update every deck in the cluster to its new name
 			cluster.updateNames()
+	window.close()
 
 	#remove images for storage space
 	
 	deleteFiles("outputs/tmp/", "png")
+	deleteFiles("outputs/tmp/", "csv")
 
 	#End Stage 4
 
@@ -376,7 +413,7 @@ def toCluster():
 					outputDeckDict[deck.teamName] = []
 				outputDeckDict[deck.teamName].append(deepcopy(deck))
 
-	window["-UPDATE-"].update("Outputting Results")
+	window["-UPDATE-"].update("Outputting Results May take Some Time")
 	window.read(timeout=0.01)
 
 	for name in outputDeckDict:
@@ -389,7 +426,14 @@ def toCluster():
 	df_out = pd.DataFrame(outputList)
 	df_out.to_csv("outputs/outputCSV/{}_archetypes.csv".format(os.path.splitext(os.path.basename(filename))[0]), encoding='utf-8', index=False, mode='w+')
 
-	
+	for class_ in CLASSES:
+		aCC = superCluster.getClassClusterByName(class_)
+		X = []
+		for cluster in aCC.clusters:
+			X.append(cluster.name)
+		X = np.unique(X)
+
+		
 
 	#Make Json of SuperCluster
 
@@ -398,7 +442,7 @@ def toCluster():
 	#with open('outputs/saved_superClusters/{}_cluster.json'.format(os.path.splitext(os.path.basename(filename))[0]), 'w+') as outfile:
 	#	json.dump(superCluster.jsonify(), outfile)
 
-	window["-UPDATE-"].update("Outputting Labels")
+	window["-UPDATE-"].update("Outputting Results May take Some Times")
 	window.read(timeout=0.01)
 	#update Labels to new names
 	for class_ in CLASSES:
@@ -415,7 +459,7 @@ def toCluster():
 		df.to_csv("outputs/labels/NEW_labels/{}_labels.csv".format(class_), mode="w+", encoding='utf-8', index=False)
 
 	window.close()
-#end to CLUSTER
+	#end to CLUSTER
 
 
 

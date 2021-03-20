@@ -96,6 +96,7 @@ def parse_csv(filename, deckDict, classLists, window=None):
 	# if no schema make it Key followed by decks
 	if not any(schema):
 		schema = ['K']
+		key = 0
 		for i in range(len(schemaLine)-1):
 			schema.append('D')
 		start-=1

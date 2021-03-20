@@ -13,6 +13,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import os
 from tfKMeans import *
+from sklearn.preprocessing import RobustScaler
 
 global CLUSTER_NUMBERS
 CLASSES=["DEMONHUNTER", 'DRUID', 'HUNTER', 'MAGE', 'PALADIN', 'PRIEST', 'ROGUE', 'SHAMAN', 'WARLOCK', 'WARRIOR']
@@ -183,15 +184,73 @@ class SuperCluster:
 		for classCluster in self.myClassClusters:
 			yield(classCluster.inGameClass, classCluster.clusters)
 
-
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import RobustScaler
+def rescaleVector(myCC):
 
 	
+	CLUSTER_NUMBERS = clusterNumbers
+
+	
+
+	aCC = mySuperCluster.getClassClusterByName(hero)
+	X=[]
+	reducedSetVector = getReducedSetVector(hero=hero)
+
+	for cluster in aCC.clusters:
+
+		for dp in cluster.decks:
+			vector = []
+			#add all vectors for comparisons
+			cards = dp.deck.cards
+			cardDict = defaultdict(int)
+			for (i,j) in cards:
+				cardDict[i] = j
+
+			#Check if card is present in deck
+			vector = [float(cardDict.get(dbId, 0)) / 30 for dbId in reducedSetVector]
+
+			manaVector = (getManaCurveVector(dp))
+			vector.extend(manaVector)
+
+				
+
+			cardTypeVector = getCardTypeVector(dp)
+			vector.extend(cardTypeVector)
+
+			keyWordVector = getKeyWordVector(dp)
+			vector.extend(keyWordVector)
+
+			classNeutralVector = getClassNeutralVector(dp)
+			vector.extend(classNeutralVector)
+
+			cardSetVector = getCardSetVector(dp)
+			vector.extend(cardSetVector)
+
+			for i in range(0,100):
+				vector.append(np.array(isHighlander(dp)))
+
+			vector = np.array(vector)
+
+				#We want highlander to be very important so it gets more than one spot
+				
+
+			X.append(vector)
+				#if hero == "MAGE":
+					#print(vector)
+					#if len(vector) != 2018:
+						#print(dp.teamName)
+					#print(len(vector))
+		#print(X)
+		X = np.array(X, dtype=float)
+		X = StandardScaler().fit_transform(X)
+		return X
 
 from updateWindow import *
 def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=[3,3,3,3,3,3,3,3,3,3], window=None):
 	from sklearn import manifold
 	from sklearn.cluster import KMeans
-	from sklearn.preprocessing import StandardScaler
+	
 
 	windowUpdate = True
 	if window == None:
@@ -271,7 +330,7 @@ def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=[3,3,3,3,3,3,
 
 		#Do Machine Learning
 
-		X = StandardScaler().fit_transform(X)
+		X = RobustScaler().fit_transform(X)
 		#print(X.shape)
 		#labels = KmeansTF(X, CLUSTER_NUMBERS[clusterCountMover])
 		print("")
