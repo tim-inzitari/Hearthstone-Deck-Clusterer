@@ -41,10 +41,16 @@ def parseTournament(stage, tourny, count):
 	myString= ""
 	for match in matches:
 		data=requests.get("https://majestic.battlefy.com/tournaments/{}/matches/{}/deckstrings".format(tourny, match['_id'])).json()
-		myString+="\n{},".format(tourny)+"{}_{}".format(count+1, match['top']['team']['name']).replace("\n", "").replace(",","") + ","+"{}".format(data['top'][0]).replace("\n", "").replace(",","")+","+ "{}".format(data['top'][1]).replace("\n", "").replace(",","")+","+"{}".format(data['top'][2]).replace("\n", "").replace(",","")
+		if (len(data['top']) != 0):
+			myString+="\n{},".format(tourny)+"{}_{}".format(count+1, match['top']['team']['name']).replace("\n", "").replace(",","")
+			for i in range(len(data['top'])):
+				myString+=","+"{}".format(data['top'][i]).replace("\n","").replace(",","")
+		#","+"{}".format(data['top'][0]).replace("\n", "").replace(",","")+","+ "{}".format(data['top'][1]).replace("\n", "").replace(",","")+","+"{}".format(data['top'][2]).replace("\n", "").replace(",","")
 		if match['isBye'] == False:
-			myString+="\n{},".format(tourny)+"{}_{}".format(count+1, match['bottom']['team']['name']).replace("\n", "").replace(",","") + ","+"{}".format(data['bottom'][0]).replace("\n", "").replace(",","")+","+ "{}".format(data['bottom'][1]).replace("\n", "").replace(",","")+","+"{}".format(data['bottom'][2]).replace("\n", "").replace(",","")
-
+			if (len(data['bottom']) != 0):
+				myString+="\n{},".format(tourny)+"{}_{}".format(count+1, match['bottom']['team']['name']).replace("\n", "").replace(",","")# + ","+"{}".format(data['bottom'][0]).replace("\n", "").replace(",","")+","+ "{}".format(data['bottom'][1]).replace("\n", "").replace(",","")+","+"{}".format(data['bottom'][2]).replace("\n", "").replace(",","")
+				for i in range(len(data['bottom'])):
+					myString+=","+"{}".format(data['bottom'][i]).replace("\n","").replace(",","")
 
 	print("End Tourny {}".format(count+1))
 	return myString

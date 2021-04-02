@@ -59,9 +59,9 @@ def testClassify(srcData, dataPoints, hero):
 	#model = KNeighborsClassifier(n_neighbors=5, p=2)
 	#model = svm.SVC(random_state=0, C=1.0)
 	#model = DecisionTreeClassifier(random_state=0)
-	model = RandomForestClassifier(n_estimators=500, random_state=0, bootstrap=True, verbose=0, n_jobs=-1)
-	#model = MLPClassifier(random_state=0, max_iter=50000, hidden_layer_sizes=(64,64), early_stopping=True, solver='adam', warm_start=False)
+		#model = MLPClassifier(random_state=0, max_iter=50000, hidden_layer_sizes=(64,64), early_stopping=True, solver='adam', warm_start=False)
 	#model.fit(X_train, y_train)
+	model = RandomForestClassifier(n_estimators=500, random_state=0, bootstrap=True, verbose=0, n_jobs=-1)
 	model.fit(src_features,srcs_labels)
 	y_pred = model.predict(X_test)
 	from sklearn import metrics
