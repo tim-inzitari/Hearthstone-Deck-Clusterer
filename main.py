@@ -433,7 +433,29 @@ def toCluster():
 			X.append(cluster.name)
 		X = np.unique(X)
 
-		
+	countDict = {}
+	classTotals = []
+	for class_ in CLASSES:
+		aCC = superCluster.getClassClusterByName(class_)
+		x = 0
+		for cluster in aCC.clusters:
+			name = "{} {}".format(cluster.name, class_.lower())
+			if name not in countDict:
+				countDict[name] = 0
+			count = cluster.getCount()
+			countDict[name]+= count
+			x+= count
+		classTotals.append(x)
+
+	with open("outputs/outputCSV/{}_counts.csv".format(os.path.splitext(os.path.basename(filename))[0]), "w+", encoding='utf-8') as f:
+		for class_, i in zip(CLASSES, classTotals):
+			f.write("{},{}\n".format(class_,i))
+
+		f.write("\n\n")
+
+		for deck in countDict:
+			f.write("{},{}\n".format(deck, countDict[deck]))
+
 
 	#Make Json of SuperCluster
 

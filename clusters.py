@@ -85,7 +85,10 @@ class Cluster:
 			deck.classification = self.name
 
 
+	def getCount(self):
+		return len(self.decks)
 
+		
 	def __str__(self):
 		clustID = self.clusterID
 		clustName = self.name
