@@ -108,8 +108,6 @@ def testClassify(srcData, dataPoints, hero):
 		cardSetVector = getCardSetVector(dp)
 		vector.extend(cardSetVector)
 
-		for i in range(0,100):
-			vector.append(np.array(isHighlander(dp)))
 
 		vector = np.array(vector)
 

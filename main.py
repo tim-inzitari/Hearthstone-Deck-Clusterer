@@ -92,8 +92,6 @@ def toClassify():
 	window.read(timeout=0.00001)
 
 
-	labelData="outputs/labels/use this"
-	testData="CSVs/tespa varsity.csv"
 
 	deckDict = {}
 	classLists = []
@@ -127,30 +125,37 @@ def toClassify():
 		for deck in outputDeckDict[name]:
 			subList.append("{} {}".format(deck.classification, deck.ingameClass))
 		outputList.append(subList)
-	Q = pd.read_csv("outputs/outputCSV/tespa_varsity1_archetypes_real.csv")
 
 	
 
-	QList = [list(row) for row in Q.values]
-	QDict= {}
-	w = 0
-	for row in QList:
-		name = row[0]
 
-		QDict[name] = [row[1], row[2], row[3], row[4]]
 
-	PDict = {}
+	classifyDict = {}
+	classCountDict={}
 	for name in outputDeckDict:
-		PDict[name] = []
+		#PDict[name] = []
 		for x in outputDeckDict[name]:
-			PDict[name].append("{} {}".format(x.classification, x.ingameClass))
+			y = "{} {}".format(x.classification, x.ingameClass)
+			if x.ingameClass not in classCountDict:
+				classCountDict[x.ingameClass.lower()] = 0
+			if y not in classifyDict:
+				classifyDict[y] = 0
+			classifyDict[y] +=1
+			classCountDict[x.ingameClass.lower()]+=1
 
-	for q, t in zip(QDict, PDict):
-		print("{} wrong on {} : \n\t actual:  {} \t\t  output:{}\n".format(q, list(set(PDict[q])-set(QDict[q])),list(QDict[q]),list(PDict[q])))
-		w+= len( list(set(PDict[q])-set(QDict[q])))
+	with open("outputs/outputCSV/{}_counts.csv".format(os.path.splitext(os.path.basename(testData))[0]), "w+", encoding='utf-8') as f:
+		for class_ in classCountDict:
+			f.write("{},{}\n".format(class_, classCountDict[class_]))
+		f.write("\n\n")
 
-	print("{} of {}:".format(w, 36*4))
-	print(float(1-(w/(36*4))))
+		for deck in classifyDict:
+			f.write("{},{}\n".format(deck, classifyDict[deck]))
+
+	#for q, t in zip(QDict, PDict):
+		#print("{} wrong on {} : \n\t actual:  {} \t\t  output:{}\n".format(q, list(set(PDict[q])-set(QDict[q])),list(QDict[q]),list(PDict[q])))
+		#w+= len( list(set(PDict[q])-set(QDict[q])))
+
+	#print(float(1-(w/(36*4))))
 
 	df = pd.DataFrame(outputList)
 	df.to_csv("outputs/outputCSV/{}_archetypes.csv".format(os.path.splitext(os.path.basename(testData))[0]), encoding='utf-8', index=False, mode='w+')
