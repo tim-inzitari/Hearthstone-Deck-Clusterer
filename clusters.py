@@ -21,7 +21,6 @@ db = card_db()
 
 
 
-
 #Clustering process wants a more precise log for debug purposes
 # Copied from example at @ https://docs.python.org/3/howto/logging.html
 import logging
@@ -146,7 +145,7 @@ class ClassCluster:
 		for cluster in self.clusters:
 			yield(cluster.clusterID, cluster.decks)
 
-
+plt.ion()
 #Collection of ClassClusters
 #Used to save a configuration for later Classification
 class SuperCluster:
@@ -186,6 +185,39 @@ class SuperCluster:
 	def convertToDict(self):
 		for classCluster in self.myClassClusters:
 			yield(classCluster.inGameClass, classCluster.clusters)
+
+	def chartifyData(self, theDateUpdated=""):
+		result = []
+
+		i = 1
+		for aCC in self.myClassClusters:
+			plt.figure(i)
+			myXs = []
+			myYs = []
+			myLabels = []
+			clusters= {}
+			for cluster in aCC.clusters:
+				if cluster.name not in clusters:
+					clusters[cluster.name] = []
+				for dp in cluster.decks:
+					myXs.append(dp["x"])
+					myYs.append(dp["y"])
+					myLabels.append(dp.classification)
+					
+					clusters[cluster.name].append(tuple((dp["x"], dp["y"])))
+			#print(clusters)
+			for c in clusters:
+				first = [t[0] for t in clusters[c]]
+				second = [t[1] for t in clusters[c]]
+				plt.scatter(first, second, label=c)
+			plt.title(CardClass(aCC.inGameClass).name)
+			plt.ylabel("y")
+			plt.xlabel("x")
+			plt.legend()
+			i+=1
+			result.append(tuple((myXs, myYs, myLabels)))
+		plt.show()
+		return result
 
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import RobustScaler
@@ -328,6 +360,22 @@ def createSuperCluster(inData, scFact=SuperCluster, clusterNumbers=[3,3,3,3,3,3,
 		X = np.array(X, dtype=float)
 
 		logger.info("Full Feature Vector Length: %s" % len(X[0]))
+
+		#do machine learning
+		# Use TSNE to help visualize the high dimensonal data
+		if len(dataPoints) > 1:
+			tsne = manifold.TSNE(n_components=2, init='pca', random_state=0)
+			xy = tsne.fit_transform(deepcopy(X))
+			for (x,y), dp in zip(xy, dataPoints):
+				dp.x = float(x)
+				dp.y = float(y)
+		elif len(dataPoints) == 1:
+				#in case of only one deck just dump it at origin
+			dataPoints[0].x = 0.0
+			dataPoints[0].y = 0.0
+		else:
+				#Nothing here
+			continue
 
 		#Do Machine Learning
 

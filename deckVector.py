@@ -71,6 +71,7 @@ keyWords = [
 	GameTag.TWINSPELL,
 	GameTag.REBORN,
 	GameTag.SPELLBURST,
+	GameTag.FRENZY
 ]
 
 # keywords Vector

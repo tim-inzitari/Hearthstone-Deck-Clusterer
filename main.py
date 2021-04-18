@@ -485,6 +485,7 @@ def toCluster():
 		df = df.sort_values("cluster")
 		df.to_csv("outputs/labels/NEW_labels/{}_labels.csv".format(class_), mode="w+", encoding='utf-8', index=False)
 
+	j = superCluster.chartifyData()
 	window.close()
 	#end to CLUSTER
 
