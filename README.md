@@ -13,6 +13,7 @@ This can be done by following instructions in **Setup**
 * Scikit-learn
 * [python-hearthstone](https://github.com/hearthsim/hsdata)
 * PySimpleGui
+* Tensorflow
 * scikit-learn
 * pandas
 * [Python Imaging Library](https://pillow.readthedocs.io)
