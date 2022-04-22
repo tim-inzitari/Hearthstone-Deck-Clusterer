@@ -24,7 +24,7 @@ This can be done by following instructions in **Setup**
 
 ## Setup   
 
-Clone this repository first, then clone the hs-card-tiles repo [https://github.com/HearthSim/hs-card-tiles](https://github.com/HearthSim/hs-card-tiles) within the `DeckClusterer` directory.   
+Clone this repository first, then clone the hs-card-tiles repo [https://github.com/HearthSim/hs-card-tiles](https://github.com/HearthSim/hs-card-tiles) within the `Hearthstone-Deck-Clusterer` directory.   
 
 ```
 git clone https://github.com/HearthSim/hs-card-tiles
