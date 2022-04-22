@@ -29,7 +29,7 @@ makedir('outputs')
 makedir('outputs/labels')
 makedir('outputs/outputCSV')
 makedir('outputs/tmp')
-makedir('outputs/NEW_labels')
+makedir('outputs/labels/NEW_labels')
 
 
 
