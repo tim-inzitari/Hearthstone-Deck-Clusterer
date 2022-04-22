@@ -50,12 +50,12 @@ python main.py
 and follow instructions on the GUI   
    
 To Generate CSVs from Battlefy Data:    
-`STARTDATE` format: "MM-DD-YYYY" **Note, 24 hour time so enter the Monday for a full weekend**   
-`ENDDATE` format: "MM-DD-YYYY" **Note UCT Timezone so enter the Monday for a full weekend**   
+`STARTDATE` format: "YYYY-MM-DD" **Note, 24 hour time so enter the Monday for a full weekend**   
+`ENDDATE` format: "YYYY-MM-DD-YYYY" **Note UCT Timezone so enter the Monday for a full weekend**   
 
 ```
 cd CSVs/   
-python getCSVsThreaded STARTDATE ENDDATE   
+python getCSVS.py STARTDATE ENDDATE   
 ```
 
 ## CSV formatting
