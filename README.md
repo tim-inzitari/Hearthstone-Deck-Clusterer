@@ -11,7 +11,7 @@ This can be done by following instructions in **Setup**
 * [python-hearthstone](https://github.com/hearthsim/python-hearthstone)
 * MatPlotLib
 * Scikit-learn
-* [python-hearthstone](https://github.com/hearthsim/hsdata)
+* [python-hearthstone-data](https://github.com/hearthsim/hsdata)
 * PySimpleGui
 * Tensorflow
 * scikit-learn
