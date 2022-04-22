@@ -71,7 +71,14 @@ keyWords = [
 	GameTag.TWINSPELL,
 	GameTag.REBORN,
 	GameTag.SPELLBURST,
-	GameTag.FRENZY
+	GameTag.FRENZY,
+	GameTag.TRADEABLE,
+	GameTag.COLOSSAL,
+	GameTag.DREDGE,
+	GameTag.TAG_ONE_TURN_EFFECT,
+	GameTag.QUESTLINE,
+	GameTag.RITUAL,
+	GameTag.TOPDECK,
 ]
 
 # keywords Vector

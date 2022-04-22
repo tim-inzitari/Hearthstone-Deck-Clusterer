@@ -19,6 +19,20 @@ import threading
 from deleteFiles import *
 from testClassify import *
 
+def makedir(name):
+	try:
+		os.mkdir(name)
+	except:
+		pass
+
+makedir('outputs')
+makedir('outputs/labels')
+makedir('outputs/outputCSV')
+makedir('outputs/tmp')
+makedir('outputs/NEW_labels')
+
+
+
 CLASSES=["DEMONHUNTER", 'DRUID', 'HUNTER', 'MAGE', 'PALADIN', 'PRIEST', 'ROGUE', 'SHAMAN', 'WARLOCK', 'WARRIOR']
 
 def updateTextWindow(window, id, text):
